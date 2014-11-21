@@ -11,7 +11,7 @@ class Hub {
   Hub(const std::string& applicationIdentifier = "")
       : application_identifier_(applicationIdentifier), myo_(nullptr) {}
 
-  // waveForMyo returns a null pointer for now. In the future a SimulatedMyo
+  // waitForMyo returns a null pointer for now. In the future a SimulatedMyo
   // class should be returned instead. However, a pointer to a SimulatedMyo
   // object needs to be convertable to a myo::Myo pointer in order for onPose
   // and all the other DeviceListener methods to work.
