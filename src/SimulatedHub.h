@@ -6,16 +6,15 @@
 #include <myo/myo.hpp>
 
 namespace MyoSimulator {
-class Hub {
+class Hub : public myo::Hub {
  public:
   Hub(const std::string& applicationIdentifier = "")
-      : application_identifier_(applicationIdentifier), myo_(nullptr) {}
+      : myo::Hub(applicationIdentifier), myo_(nullptr) {}
 
-  // waitForMyo returns a null pointer for now. In the future a SimulatedMyo
-  // class should be returned instead. However, a pointer to a SimulatedMyo
-  // object needs to be convertable to a myo::Myo pointer in order for onPose
-  // and all the other DeviceListener methods to work.
-  myo::Myo* waitForMyo(unsigned int milliseconds = 0) { return myo_; }
+  myo::Myo* waitForMyo(unsigned int milliseconds = 0) {
+    myo_ = myo::Hub::waitForMyo(milliseconds);
+    return myo_;
+  }
   void addListener(myo::DeviceListener* listener) { listener_ = listener; }
   void removeListener(myo::DeviceListener* listener) { listener_ = nullptr; }
   void run(unsigned int duration_ms) { detectAndTriggerPose(); }
@@ -45,14 +44,14 @@ class Hub {
     else {
       std::cerr << "MyoSimulator: \"" << pose_str
                 << "\" is not a valid pose. Valid poses are:\n"
-                   "               rest, fist, waveIn, waveOut, fingersSpread, reserved1,\n"
+                   "               rest, fist, waveIn, waveOut, fingersSpread, "
+                   "reserved1,\n"
                    "               thumbToPinky, unknown." << std::endl;
       return;
     }
     listener_->onPose(myo_, 0, pose);
   }
 
-  std::string application_identifier_;
   myo::DeviceListener* listener_;
   myo::Myo* myo_;
 };

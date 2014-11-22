@@ -13,6 +13,12 @@ int main() {
   try {
     MyoSimulator::Hub hub("com.voidingwarranties.myo-simulator-example");
 
+    myo::Myo* myo = hub.waitForMyo(1000);
+    if (!myo) {
+      std::cerr << "Unable to find a Myo! Simulating poses will still work, "
+                   "but the myo pointer is NULL." << std::endl;
+    }
+
     Listener listener;
     hub.addListener(&listener);
 
