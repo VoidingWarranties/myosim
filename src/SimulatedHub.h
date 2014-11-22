@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 #include <myo/myo.hpp>
 
 namespace MyoSimulator {
@@ -15,8 +16,16 @@ class Hub : public myo::Hub {
     myo_ = myo::Hub::waitForMyo(milliseconds);
     return myo_;
   }
-  void addListener(myo::DeviceListener* listener) { listener_ = listener; }
-  void removeListener(myo::DeviceListener* listener) { listener_ = nullptr; }
+  void addListener(myo::DeviceListener* listener) {
+    listeners_.push_back(listener);
+  }
+  void removeListener(myo::DeviceListener* listener) {
+    auto itr = listeners_.begin();
+    for (; itr != listeners_.end(); ++itr) {
+      if (*itr == listener) break;
+    }
+    if (itr != listeners_.end()) listeners_.erase(itr);
+  }
   void run(unsigned int duration_ms) { detectAndTriggerPose(); }
   void runOnce(unsigned int duration_ms) { detectAndTriggerPose(); }
 
@@ -49,10 +58,12 @@ class Hub : public myo::Hub {
                    "               thumbToPinky, unknown." << std::endl;
       return;
     }
-    listener_->onPose(myo_, 0, pose);
+    for (auto itr = listeners_.begin(); itr != listeners_.end(); ++itr) {
+      (*itr)->onPose(myo_, 0, pose);
+    }
   }
 
-  myo::DeviceListener* listener_;
+  std::list<myo::DeviceListener*> listeners_;
   myo::Myo* myo_;
 };
 }
