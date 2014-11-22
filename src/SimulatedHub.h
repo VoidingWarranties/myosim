@@ -1,3 +1,8 @@
+/* This class is a drop in replacement for the myo::Hub class. It listens for
+ * input and calls the onPose method for each of the listeners when a pose is
+ * typed.
+ */
+
 #ifndef MYOSIMULATOR_SIMULATEDHUB_H_
 #define MYOSIMULATOR_SIMULATEDHUB_H_
 
@@ -20,12 +25,18 @@ class Hub : public myo::Hub {
     listeners_.push_back(listener);
   }
   void removeListener(myo::DeviceListener* listener) {
+    // Find the listener in the list.
     auto itr = listeners_.begin();
     for (; itr != listeners_.end(); ++itr) {
       if (*itr == listener) break;
     }
+    // Remove the listener.
     if (itr != listeners_.end()) listeners_.erase(itr);
   }
+
+  // duration_ms currently has no effect. Both of these functions will wait for
+  // user input before returning. This should be changed to more closely mimic
+  // the myo::Hub behavior.
   void run(unsigned int duration_ms) { detectAndTriggerPose(); }
   void runOnce(unsigned int duration_ms) { detectAndTriggerPose(); }
 

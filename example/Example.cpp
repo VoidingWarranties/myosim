@@ -2,10 +2,17 @@
 #include <myo/myo.hpp>
 #include "../src/SimulatedHub.h"
 
-class Listener : public myo::DeviceListener {
+class PrintListener : public myo::DeviceListener {
  public:
   void onPose(myo::Myo* myo, uint64_t timestamp, myo::Pose pose) {
     std::cout << "Detected pose! " << pose << std::endl;
+  }
+};
+
+class VibrateListener : public myo::DeviceListener {
+ public:
+  void onPose(myo::Myo* myo, uint64_t timestamp, myo::Pose pose) {
+    if (myo) myo->vibrate(myo::Myo::vibrationShort);
   }
 };
 
@@ -19,8 +26,10 @@ int main() {
                    "but the myo pointer is NULL." << std::endl;
     }
 
-    Listener listener;
-    hub.addListener(&listener);
+    PrintListener print_listener;
+    VibrateListener vibrate_listener;
+    hub.addListener(&print_listener);
+    hub.addListener(&vibrate_listener);
 
     while (true) {
       hub.run(0);
