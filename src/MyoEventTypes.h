@@ -4,6 +4,10 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
+#include <vector>
 
 namespace {
 ///////////////////////////////////////////////////
@@ -82,16 +86,15 @@ void serialize(Archive& ar, myo::Quaternion<T>& quat,
 }
 // myo::Vector3<T>
 template <class Archive, class T>
-void serialize(Archive& ar, myo::Vector3<T>& vec,
-               const unsigned int version) {
+void serialize(Archive& ar, myo::Vector3<T>& vec, const unsigned int version) {
   ar & vec.*get(Vector3_data<T>());
 }
 }
 
 namespace MyoSim {
-////////////////////////////////////
-// Structs for storing Myo events //
-////////////////////////////////////
+//////////////////////////////////////////////
+// Structs for storing groups of Myo events //
+//////////////////////////////////////////////
 // Base struct to derive from for all myo events. Note that the pointer to the
 // myo is not stored, as Thalmic does not provide a way to construct a Myo
 // object from outside a Hub.
@@ -103,6 +106,30 @@ struct MyoEvent {
     ar & timestamp;
   }
 };
+// This struct is used to group events that occured in the same Hub::run() loop.
+struct EventLoopGroup {
+  // TODO: consider changing this to vector<unique_ptr<...>>
+  std::vector<std::shared_ptr<MyoEvent>> events;
+
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & events;
+  }
+};
+// Used to group EventLoopGroups together. This represents all of the events
+// recorded in one Myo session.
+struct AllEvents {
+  std::vector<EventLoopGroup> events;
+
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & events;
+  }
+};
+
+////////////////////////////////////////
+// Structs for storing raw Myo events //
+////////////////////////////////////////
 // myo::DeviceListener::onPose
 struct onPairEvent : MyoEvent {
   myo::FirmwareVersion firmware_version;
