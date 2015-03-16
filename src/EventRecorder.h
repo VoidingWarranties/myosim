@@ -157,6 +157,9 @@ void EventRecorder::onEmgData(myo::Myo* myo, uint64_t timestamp,
 
 void EventRecorder::addEvent(myo::Myo* myo,
                              const std::shared_ptr<MyoEvent>& event) {
+  if (events_[myo].events.empty()) {
+    endEventLoopGroup(myo);
+  }
   events_[myo].events.back().events.push_back(event);
 }
 }
