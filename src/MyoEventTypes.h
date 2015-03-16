@@ -66,24 +66,24 @@ namespace myo {
 template <class Archive>
 void serialize(Archive& ar, myo::FirmwareVersion& fv,
                const unsigned int version) {
-  ar& fv.firmwareVersionMajor;
-  ar& fv.firmwareVersionMinor;
-  ar& fv.firmwareVersionPatch;
-  ar& fv.firmwareVersionHardwareRev;
+  ar & fv.firmwareVersionMajor;
+  ar & fv.firmwareVersionMinor;
+  ar & fv.firmwareVersionPatch;
+  ar & fv.firmwareVersionHardwareRev;
 }
 // myo::Pose
 template <class Archive>
 void serialize(Archive& ar, myo::Pose& pose, const unsigned int version) {
-  ar& pose.*get(Pose_type());
+  ar & pose.*get(Pose_type());
 }
 // myo::Quaternion<T>
 template <class Archive, class T>
 void serialize(Archive& ar, myo::Quaternion<T>& quat,
                const unsigned int version) {
-  ar& quat.*get(Quaternion_x<T>());
-  ar& quat.*get(Quaternion_y<T>());
-  ar& quat.*get(Quaternion_z<T>());
-  ar& quat.*get(Quaternion_w<T>());
+  ar & quat.*get(Quaternion_x<T>());
+  ar & quat.*get(Quaternion_y<T>());
+  ar & quat.*get(Quaternion_z<T>());
+  ar & quat.*get(Quaternion_w<T>());
 }
 // myo::Vector3<T>
 template <class Archive, class T>
