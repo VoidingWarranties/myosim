@@ -103,13 +103,16 @@ namespace MyoSim {
 // object from outside a Hub.
 struct MyoEvent {
   MyoEvent() {}
-  MyoEvent(uint64_t timestamp) : timestamp(timestamp) {}
+  MyoEvent(int myo_index, uint64_t timestamp)
+      : myo_index(myo_index), timestamp(timestamp) {}
   virtual ~MyoEvent() {}
 
+  int myo_index;
   uint64_t timestamp;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_NVP(myo_index);
     ar & BOOST_SERIALIZATION_NVP(timestamp);
   }
 };
@@ -141,8 +144,9 @@ struct EventSession {
 // myo::DeviceListener::onPair
 struct onPairEvent : MyoEvent {
   onPairEvent() {}
-  onPairEvent(uint64_t timestamp, const myo::FirmwareVersion& firmware_version)
-      : MyoEvent(timestamp), firmware_version(firmware_version) {}
+  onPairEvent(int myo_index, uint64_t timestamp,
+              const myo::FirmwareVersion& firmware_version)
+      : MyoEvent(myo_index, timestamp), firmware_version(firmware_version) {}
 
   myo::FirmwareVersion firmware_version;
 
@@ -155,7 +159,8 @@ struct onPairEvent : MyoEvent {
 // myo::DeviceListener::onUnpair
 struct onUnpairEvent : MyoEvent {
   onUnpairEvent() {}
-  onUnpairEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
+  onUnpairEvent(int myo_index, uint64_t timestamp)
+      : MyoEvent(myo_index, timestamp) {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -165,9 +170,9 @@ struct onUnpairEvent : MyoEvent {
 // myo::DeviceListener::onConnect
 struct onConnectEvent : MyoEvent {
   onConnectEvent() {}
-  onConnectEvent(uint64_t timestamp,
+  onConnectEvent(int myo_index, uint64_t timestamp,
                  const myo::FirmwareVersion& firmware_version)
-      : MyoEvent(timestamp), firmware_version(firmware_version) {}
+      : MyoEvent(myo_index, timestamp), firmware_version(firmware_version) {}
 
   myo::FirmwareVersion firmware_version;
 
@@ -180,7 +185,8 @@ struct onConnectEvent : MyoEvent {
 // myo::DeviceListener::onDisconnect
 struct onDisconnectEvent : MyoEvent {
   onDisconnectEvent() {}
-  onDisconnectEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
+  onDisconnectEvent(int myo_index, uint64_t timestamp)
+      : MyoEvent(myo_index, timestamp) {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -190,8 +196,9 @@ struct onDisconnectEvent : MyoEvent {
 // myo::DeviceListener::onArmSync
 struct onArmSyncEvent : MyoEvent {
   onArmSyncEvent() {}
-  onArmSyncEvent(uint64_t timestamp, myo::Arm arm, myo::XDirection x_direction)
-      : MyoEvent(timestamp), arm(arm), x_direction(x_direction) {}
+  onArmSyncEvent(int myo_index, uint64_t timestamp, myo::Arm arm,
+                 myo::XDirection x_direction)
+      : MyoEvent(myo_index, timestamp), arm(arm), x_direction(x_direction) {}
 
   myo::Arm arm;
   myo::XDirection x_direction;
@@ -206,7 +213,8 @@ struct onArmSyncEvent : MyoEvent {
 // myo::DeviceListener::onArmUnsync
 struct onArmUnsyncEvent : MyoEvent {
   onArmUnsyncEvent() {}
-  onArmUnsyncEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
+  onArmUnsyncEvent(int myo_index, uint64_t timestamp)
+      : MyoEvent(myo_index, timestamp) {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -216,7 +224,8 @@ struct onArmUnsyncEvent : MyoEvent {
 // myo::DeviceListener::onUnlock
 struct onUnlockEvent : MyoEvent {
   onUnlockEvent() {}
-  onUnlockEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
+  onUnlockEvent(int myo_index, uint64_t timestamp)
+      : MyoEvent(myo_index, timestamp) {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -226,7 +235,8 @@ struct onUnlockEvent : MyoEvent {
 // myo::DeviceListener::onLock
 struct onLockEvent : MyoEvent {
   onLockEvent() {}
-  onLockEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
+  onLockEvent(int myo_index, uint64_t timestamp)
+      : MyoEvent(myo_index, timestamp) {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -236,8 +246,8 @@ struct onLockEvent : MyoEvent {
 // myo::DeviceListener::onPose
 struct onPoseEvent : MyoEvent {
   onPoseEvent() {}
-  onPoseEvent(uint64_t timestamp, const myo::Pose& pose)
-      : MyoEvent(timestamp), pose(pose) {}
+  onPoseEvent(int myo_index, uint64_t timestamp, const myo::Pose& pose)
+      : MyoEvent(myo_index, timestamp), pose(pose) {}
 
   myo::Pose pose;
 
@@ -250,9 +260,9 @@ struct onPoseEvent : MyoEvent {
 // myo::DeviceListener::onOrientationData
 struct onOrientationDataEvent : MyoEvent {
   onOrientationDataEvent() {}
-  onOrientationDataEvent(uint64_t timestamp,
+  onOrientationDataEvent(int myo_index, uint64_t timestamp,
                          const myo::Quaternion<float>& rotation)
-      : MyoEvent(timestamp), rotation(rotation) {}
+      : MyoEvent(myo_index, timestamp), rotation(rotation) {}
 
   myo::Quaternion<float> rotation;
 
@@ -265,8 +275,9 @@ struct onOrientationDataEvent : MyoEvent {
 // myo::DeviceListener::onAccelerometerData
 struct onAccelerometerDataEvent : MyoEvent {
   onAccelerometerDataEvent() {}
-  onAccelerometerDataEvent(uint64_t timestamp, const myo::Vector3<float>& accel)
-      : MyoEvent(timestamp), accel(accel) {}
+  onAccelerometerDataEvent(int myo_index, uint64_t timestamp,
+                           const myo::Vector3<float>& accel)
+      : MyoEvent(myo_index, timestamp), accel(accel) {}
 
   myo::Vector3<float> accel;
 
@@ -279,8 +290,9 @@ struct onAccelerometerDataEvent : MyoEvent {
 // myo::DeviceListener::onGyroscopeData
 struct onGyroscopeDataEvent : MyoEvent {
   onGyroscopeDataEvent() {}
-  onGyroscopeDataEvent(uint64_t timestamp, const myo::Vector3<float>& gyro)
-      : MyoEvent(timestamp), gyro(gyro) {}
+  onGyroscopeDataEvent(int myo_index, uint64_t timestamp,
+                       const myo::Vector3<float>& gyro)
+      : MyoEvent(myo_index, timestamp), gyro(gyro) {}
 
   myo::Vector3<float> gyro;
 
@@ -293,8 +305,8 @@ struct onGyroscopeDataEvent : MyoEvent {
 // myo::DeviceListener::onRssi
 struct onRssiEvent : MyoEvent {
   onRssiEvent() {}
-  onRssiEvent(uint64_t timestamp, int8_t rssi)
-      : MyoEvent(timestamp), rssi(rssi) {}
+  onRssiEvent(int myo_index, uint64_t timestamp, int8_t rssi)
+      : MyoEvent(myo_index, timestamp), rssi(rssi) {}
 
   int8_t rssi;
 
@@ -307,8 +319,8 @@ struct onRssiEvent : MyoEvent {
 // myo::DeviceListener::onEmgData
 struct onEmgDataEvent : MyoEvent {
   onEmgDataEvent() {}
-  onEmgDataEvent(uint64_t timestamp, const int8_t* const emg_ptr)
-      : MyoEvent(timestamp) {
+  onEmgDataEvent(int myo_index, uint64_t timestamp, const int8_t* const emg_ptr)
+      : MyoEvent(myo_index, timestamp) {
     for (std::size_t i = 0; i < 8; ++i) {
       emg[i] = emg_ptr[i];
     }
