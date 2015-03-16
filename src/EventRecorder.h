@@ -5,7 +5,7 @@
 #include "MyoEventTypes.h"
 
 namespace MyoSim {
-class EventRecorder : myo::DeviceListener {
+class EventRecorder : public myo::DeviceListener {
  public:
   enum EventTypes {
     PAIR                = 1 << 0,
