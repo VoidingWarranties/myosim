@@ -160,6 +160,6 @@ void EventRecorder::addEvent(myo::Myo* myo,
   if (events_[myo].events.empty()) {
     endEventLoopGroup(myo);
   }
-  events_[myo].events.back().events.push_back(event);
+  events_[myo].events.back().group.push_back(event);
 }
 }

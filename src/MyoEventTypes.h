@@ -117,12 +117,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoEvent);
 // This struct is used to group events that occured in the same Hub::run() loop.
 struct EventLoopGroup {
   // TODO: consider changing this to vector<unique_ptr<...>>
-  // TODO: change name of events to event_group
-  std::vector<std::shared_ptr<MyoEvent>> events;
+  std::vector<std::shared_ptr<MyoEvent>> group;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_NVP(events);
+    ar & BOOST_SERIALIZATION_NVP(group);
   }
 };
 // Used to group EventLoopGroups together. This represents all of the events
