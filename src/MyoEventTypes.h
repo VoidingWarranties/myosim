@@ -4,6 +4,7 @@
 
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -66,29 +67,30 @@ namespace myo {
 template <class Archive>
 void serialize(Archive& ar, myo::FirmwareVersion& fv,
                const unsigned int version) {
-  ar & fv.firmwareVersionMajor;
-  ar & fv.firmwareVersionMinor;
-  ar & fv.firmwareVersionPatch;
-  ar & fv.firmwareVersionHardwareRev;
+  ar & boost::serialization::make_nvp("major", fv.firmwareVersionMajor);
+  ar & boost::serialization::make_nvp("minor", fv.firmwareVersionMinor);
+  ar & boost::serialization::make_nvp("patch", fv.firmwareVersionPatch);
+  ar & boost::serialization::make_nvp("hardwareRev",
+                                      fv.firmwareVersionHardwareRev);
 }
 // myo::Pose
 template <class Archive>
 void serialize(Archive& ar, myo::Pose& pose, const unsigned int version) {
-  ar & pose.*get(Pose_type());
+  ar & boost::serialization::make_nvp("type", pose.*get(Pose_type()));
 }
 // myo::Quaternion<T>
 template <class Archive, class T>
 void serialize(Archive& ar, myo::Quaternion<T>& quat,
                const unsigned int version) {
-  ar & quat.*get(Quaternion_x<T>());
-  ar & quat.*get(Quaternion_y<T>());
-  ar & quat.*get(Quaternion_z<T>());
-  ar & quat.*get(Quaternion_w<T>());
+  ar & boost::serialization::make_nvp("x", quat.*get(Quaternion_x<T>()));
+  ar & boost::serialization::make_nvp("y", quat.*get(Quaternion_y<T>()));
+  ar & boost::serialization::make_nvp("z", quat.*get(Quaternion_z<T>()));
+  ar & boost::serialization::make_nvp("w", quat.*get(Quaternion_w<T>()));
 }
 // myo::Vector3<T>
 template <class Archive, class T>
 void serialize(Archive& ar, myo::Vector3<T>& vec, const unsigned int version) {
-  ar & vec.*get(Vector3_data<T>());
+  ar & boost::serialization::make_nvp("data", vec.*get(Vector3_data<T>()));
 }
 }
 
@@ -108,18 +110,19 @@ struct MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & timestamp;
+    ar & BOOST_SERIALIZATION_NVP(timestamp);
   }
 };
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoEvent);
 // This struct is used to group events that occured in the same Hub::run() loop.
 struct EventLoopGroup {
   // TODO: consider changing this to vector<unique_ptr<...>>
+  // TODO: change name of events to event_group
   std::vector<std::shared_ptr<MyoEvent>> events;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & events;
+    ar & BOOST_SERIALIZATION_NVP(events);
   }
 };
 // Used to group EventLoopGroups together. This represents all of the events
@@ -129,7 +132,7 @@ struct EventSession {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & events;
+    ar & BOOST_SERIALIZATION_NVP(events);
   }
 };
 
@@ -146,8 +149,8 @@ struct onPairEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & firmware_version;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(firmware_version);
   }
 };
 // myo::DeviceListener::onUnpair
@@ -157,7 +160,7 @@ struct onUnpairEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
   }
 };
 // myo::DeviceListener::onConnect
@@ -171,8 +174,8 @@ struct onConnectEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & firmware_version;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(firmware_version);
   }
 };
 // myo::DeviceListener::onDisconnect
@@ -182,7 +185,7 @@ struct onDisconnectEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
   }
 };
 // myo::DeviceListener::onArmSync
@@ -196,9 +199,9 @@ struct onArmSyncEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & arm;
-    ar & x_direction;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(arm);
+    ar & BOOST_SERIALIZATION_NVP(x_direction);
   }
 };
 // myo::DeviceListener::onArmUnsync
@@ -208,7 +211,7 @@ struct onArmUnsyncEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
   }
 };
 // myo::DeviceListener::onUnlock
@@ -218,7 +221,7 @@ struct onUnlockEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
   }
 };
 // myo::DeviceListener::onLock
@@ -228,7 +231,7 @@ struct onLockEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
   }
 };
 // myo::DeviceListener::onPose
@@ -241,8 +244,8 @@ struct onPoseEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & pose;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(pose);
   }
 };
 // myo::DeviceListener::onOrientationData
@@ -256,8 +259,8 @@ struct onOrientationDataEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & rotation;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(rotation);
   }
 };
 // myo::DeviceListener::onAccelerometerData
@@ -270,8 +273,8 @@ struct onAccelerometerDataEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & accel;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(accel);
   }
 };
 // myo::DeviceListener::onGyroscopeData
@@ -284,8 +287,8 @@ struct onGyroscopeDataEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & gyro;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(gyro);
   }
 };
 // myo::DeviceListener::onRssi
@@ -298,8 +301,8 @@ struct onRssiEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & rssi;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(rssi);
   }
 };
 // myo::DeviceListener::onEmgData
@@ -316,8 +319,8 @@ struct onEmgDataEvent : MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & boost::serialization::base_object<MyoEvent>(*this);
-    ar & emg;
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(emg);
   }
 };
 }
