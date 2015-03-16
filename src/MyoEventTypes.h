@@ -119,7 +119,7 @@ struct EventLoopGroup {
 };
 // Used to group EventLoopGroups together. This represents all of the events
 // recorded in one Myo session.
-struct AllEvents {
+struct EventSession {
   std::vector<EventLoopGroup> events;
 
   template <class Archive>
