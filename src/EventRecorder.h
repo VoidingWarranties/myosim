@@ -37,7 +37,7 @@ class EventRecorder : myo::DeviceListener {
   }
 
   ///////////////////////////////////////////////////////////////////////
-  // virtual event functions that override functions in DeviceListener //
+  // Virtual event functions that override functions in DeviceListener //
   ///////////////////////////////////////////////////////////////////////
   virtual void onPair(myo::Myo* myo, uint64_t timestamp,
                       myo::FirmwareVersion firmwareVersion) override;
