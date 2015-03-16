@@ -3,6 +3,8 @@
 #include <myo/myo.hpp>
 
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
@@ -98,7 +100,9 @@ namespace MyoSim {
 // myo is not stored, as Thalmic does not provide a way to construct a Myo
 // object from outside a Hub.
 struct MyoEvent {
+  MyoEvent() {}
   MyoEvent(uint64_t timestamp) : timestamp(timestamp) {}
+  virtual ~MyoEvent() {}
 
   uint64_t timestamp;
 
@@ -107,6 +111,7 @@ struct MyoEvent {
     ar & timestamp;
   }
 };
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoEvent);
 // This struct is used to group events that occured in the same Hub::run() loop.
 struct EventLoopGroup {
   // TODO: consider changing this to vector<unique_ptr<...>>
@@ -131,8 +136,9 @@ struct EventSession {
 ////////////////////////////////////////
 // Structs for storing raw Myo events //
 ////////////////////////////////////////
-// myo::DeviceListener::onPose
+// myo::DeviceListener::onPair
 struct onPairEvent : MyoEvent {
+  onPairEvent() {}
   onPairEvent(uint64_t timestamp, const myo::FirmwareVersion& firmware_version)
       : MyoEvent(timestamp), firmware_version(firmware_version) {}
 
@@ -146,6 +152,7 @@ struct onPairEvent : MyoEvent {
 };
 // myo::DeviceListener::onUnpair
 struct onUnpairEvent : MyoEvent {
+  onUnpairEvent() {}
   onUnpairEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
 
   template <class Archive>
@@ -155,6 +162,7 @@ struct onUnpairEvent : MyoEvent {
 };
 // myo::DeviceListener::onConnect
 struct onConnectEvent : MyoEvent {
+  onConnectEvent() {}
   onConnectEvent(uint64_t timestamp,
                  const myo::FirmwareVersion& firmware_version)
       : MyoEvent(timestamp), firmware_version(firmware_version) {}
@@ -169,6 +177,7 @@ struct onConnectEvent : MyoEvent {
 };
 // myo::DeviceListener::onDisconnect
 struct onDisconnectEvent : MyoEvent {
+  onDisconnectEvent() {}
   onDisconnectEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
 
   template <class Archive>
@@ -178,6 +187,7 @@ struct onDisconnectEvent : MyoEvent {
 };
 // myo::DeviceListener::onArmSync
 struct onArmSyncEvent : MyoEvent {
+  onArmSyncEvent() {}
   onArmSyncEvent(uint64_t timestamp, myo::Arm arm, myo::XDirection x_direction)
       : MyoEvent(timestamp), arm(arm), x_direction(x_direction) {}
 
@@ -193,6 +203,7 @@ struct onArmSyncEvent : MyoEvent {
 };
 // myo::DeviceListener::onArmUnsync
 struct onArmUnsyncEvent : MyoEvent {
+  onArmUnsyncEvent() {}
   onArmUnsyncEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
 
   template <class Archive>
@@ -202,6 +213,7 @@ struct onArmUnsyncEvent : MyoEvent {
 };
 // myo::DeviceListener::onUnlock
 struct onUnlockEvent : MyoEvent {
+  onUnlockEvent() {}
   onUnlockEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
 
   template <class Archive>
@@ -211,6 +223,7 @@ struct onUnlockEvent : MyoEvent {
 };
 // myo::DeviceListener::onLock
 struct onLockEvent : MyoEvent {
+  onLockEvent() {}
   onLockEvent(uint64_t timestamp) : MyoEvent(timestamp) {}
 
   template <class Archive>
@@ -220,6 +233,7 @@ struct onLockEvent : MyoEvent {
 };
 // myo::DeviceListener::onPose
 struct onPoseEvent : MyoEvent {
+  onPoseEvent() {}
   onPoseEvent(uint64_t timestamp, const myo::Pose& pose)
       : MyoEvent(timestamp), pose(pose) {}
 
@@ -233,6 +247,7 @@ struct onPoseEvent : MyoEvent {
 };
 // myo::DeviceListener::onOrientationData
 struct onOrientationDataEvent : MyoEvent {
+  onOrientationDataEvent() {}
   onOrientationDataEvent(uint64_t timestamp,
                          const myo::Quaternion<float>& rotation)
       : MyoEvent(timestamp), rotation(rotation) {}
@@ -247,6 +262,7 @@ struct onOrientationDataEvent : MyoEvent {
 };
 // myo::DeviceListener::onAccelerometerData
 struct onAccelerometerDataEvent : MyoEvent {
+  onAccelerometerDataEvent() {}
   onAccelerometerDataEvent(uint64_t timestamp, const myo::Vector3<float>& accel)
       : MyoEvent(timestamp), accel(accel) {}
 
@@ -260,6 +276,7 @@ struct onAccelerometerDataEvent : MyoEvent {
 };
 // myo::DeviceListener::onGyroscopeData
 struct onGyroscopeDataEvent : MyoEvent {
+  onGyroscopeDataEvent() {}
   onGyroscopeDataEvent(uint64_t timestamp, const myo::Vector3<float>& gyro)
       : MyoEvent(timestamp), gyro(gyro) {}
 
@@ -273,6 +290,7 @@ struct onGyroscopeDataEvent : MyoEvent {
 };
 // myo::DeviceListener::onRssi
 struct onRssiEvent : MyoEvent {
+  onRssiEvent() {}
   onRssiEvent(uint64_t timestamp, int8_t rssi)
       : MyoEvent(timestamp), rssi(rssi) {}
 
@@ -286,6 +304,7 @@ struct onRssiEvent : MyoEvent {
 };
 // myo::DeviceListener::onEmgData
 struct onEmgDataEvent : MyoEvent {
+  onEmgDataEvent() {}
   onEmgDataEvent(uint64_t timestamp, const int8_t* const emg_ptr)
       : MyoEvent(timestamp) {
     for (std::size_t i = 0; i < 8; ++i) {
@@ -302,3 +321,21 @@ struct onEmgDataEvent : MyoEvent {
   }
 };
 }
+
+// These must always appear after the boost/archive headers.
+// Putting the macros here does not gaurantee this.
+// TODO: figure out a better place to put these macros.
+BOOST_CLASS_EXPORT(MyoSim::onPairEvent);
+BOOST_CLASS_EXPORT(MyoSim::onUnpairEvent);
+BOOST_CLASS_EXPORT(MyoSim::onConnectEvent);
+BOOST_CLASS_EXPORT(MyoSim::onDisconnectEvent);
+BOOST_CLASS_EXPORT(MyoSim::onArmSyncEvent);
+BOOST_CLASS_EXPORT(MyoSim::onArmUnsyncEvent);
+BOOST_CLASS_EXPORT(MyoSim::onUnlockEvent);
+BOOST_CLASS_EXPORT(MyoSim::onLockEvent);
+BOOST_CLASS_EXPORT(MyoSim::onPoseEvent);
+BOOST_CLASS_EXPORT(MyoSim::onOrientationDataEvent);
+BOOST_CLASS_EXPORT(MyoSim::onAccelerometerDataEvent);
+BOOST_CLASS_EXPORT(MyoSim::onGyroscopeDataEvent);
+BOOST_CLASS_EXPORT(MyoSim::onRssiEvent);
+BOOST_CLASS_EXPORT(MyoSim::onEmgDataEvent);
