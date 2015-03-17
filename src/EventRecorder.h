@@ -2,6 +2,8 @@
 
 #include <myo/myo.hpp>
 
+#include <map>
+
 #include "MyoEventTypes.h"
 
 namespace MyoSim {
