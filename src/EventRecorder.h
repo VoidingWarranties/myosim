@@ -4,7 +4,7 @@
 
 #include <map>
 
-#include "MyoEventTypes.h"
+#include "EventTypes.h"
 
 namespace MyoSim {
 class EventRecorder : public myo::DeviceListener {

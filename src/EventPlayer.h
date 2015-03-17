@@ -4,7 +4,8 @@
 
 #include <functional>
 
-#include "SimulatedHub.h"
+#include "Hub.h"
+#include "EventTypes.h"
 
 namespace MyoSim {
 class EventPlayer {
