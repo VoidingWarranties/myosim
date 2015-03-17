@@ -11,7 +11,7 @@
 #include <list>
 #include <myo/myo.hpp>
 
-namespace MyoSimulator {
+namespace MyoSim {
 class Hub : public myo::Hub {
  public:
   Hub(const std::string& applicationIdentifier = "")
@@ -55,18 +55,16 @@ class Hub : public myo::Hub {
       pose = myo::Pose::waveOut;
     else if (pose_str == "fingersSpread")
       pose = myo::Pose::fingersSpread;
-    else if (pose_str == "reserved1")
-      pose = myo::Pose::reserved1;
-    else if (pose_str == "thumbToPinky")
-      pose = myo::Pose::thumbToPinky;
+    else if (pose_str == "doubleTap")
+      pose = myo::Pose::doubleTap;
     else if (pose_str == "unknown")
       pose = myo::Pose::unknown;
     else {
-      std::cerr << "MyoSimulator: \"" << pose_str
-                << "\" is not a valid pose. Valid poses are:\n"
-                   "               rest, fist, waveIn, waveOut, fingersSpread, "
-                   "reserved1,\n"
-                   "               thumbToPinky, unknown." << std::endl;
+      std::cerr
+          << "MyoSimulator: \"" << pose_str << "\" is not a valid pose. "
+          << "Valid poses are:\n"
+          << "  rest, fist, waveIn, waveOut, fingersSpread, doubleTap, unknown."
+          << std::endl;
       return;
     }
     for (auto itr = listeners_.begin(); itr != listeners_.end(); ++itr) {
