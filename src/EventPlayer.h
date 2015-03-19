@@ -3,6 +3,8 @@
 #include <myo/myo.hpp>
 
 #include <functional>
+#include <chrono>
+#include <thread>
 
 #include "Hub.h"
 #include "EventTypes.h"
@@ -16,6 +18,8 @@ class EventPlayer {
             const std::function<void(void)>& periodic = [](){});
 
  private:
+  int64_t findFirstTimestamp(const EventSession& session);
+
   MyoSim::Hub& hub_;
   std::function<void(myo::Myo*)> periodic_;
 };
@@ -24,9 +28,15 @@ EventPlayer::EventPlayer(MyoSim::Hub& hub) : hub_(hub) {}
 
 void EventPlayer::play(const EventSession& session,
                        const std::function<void(void)>& periodic) {
+  int64_t previous_timestamp = findFirstTimestamp(session);
   for (const auto& group : session.events) {
     for (const auto& base_ptr : group.group) {
-      // TODO: delay according to the timestamp.
+      // TODO: add scaling factor to time to slow down or speed up replay.
+      auto microsoecond_diff =
+          std::chrono::microseconds(base_ptr->timestamp - previous_timestamp);
+      auto now = std::chrono::steady_clock::now();
+      std::this_thread::sleep_until(now + microsoecond_diff);
+
       if (auto ptr = dynamic_cast<onPairEvent*>(base_ptr.get())) {
         hub_.onPair(nullptr, ptr->timestamp, ptr->firmware_version);
       } else if (auto ptr = dynamic_cast<onUnpairEvent*>(base_ptr.get())) {
@@ -56,9 +66,19 @@ void EventPlayer::play(const EventSession& session,
       } else if (auto ptr = dynamic_cast<onEmgDataEvent*>(base_ptr.get())) {
         hub_.onEmgData(nullptr, ptr->timestamp, ptr->emg);
       }
+      previous_timestamp = base_ptr->timestamp;
     }
     // TODO: call periodic for each Myo, event though each Myo* will be nullptr.
     periodic();
   }
+}
+
+int64_t EventPlayer::findFirstTimestamp(const EventSession& session) {
+  for (const auto& group : session.events) {
+    for (const auto& base_ptr : group.group) {
+      return base_ptr->timestamp;
+    }
+  }
+  return -1;
 }
 }
