@@ -335,21 +335,3 @@ struct onEmgDataEvent : MyoEvent {
   }
 };
 }
-
-// These must always appear after the boost/archive headers.
-// Putting the macros here does not gaurantee this.
-// TODO: figure out a better place to put these macros.
-BOOST_CLASS_EXPORT(MyoSim::onPairEvent);
-BOOST_CLASS_EXPORT(MyoSim::onUnpairEvent);
-BOOST_CLASS_EXPORT(MyoSim::onConnectEvent);
-BOOST_CLASS_EXPORT(MyoSim::onDisconnectEvent);
-BOOST_CLASS_EXPORT(MyoSim::onArmSyncEvent);
-BOOST_CLASS_EXPORT(MyoSim::onArmUnsyncEvent);
-BOOST_CLASS_EXPORT(MyoSim::onUnlockEvent);
-BOOST_CLASS_EXPORT(MyoSim::onLockEvent);
-BOOST_CLASS_EXPORT(MyoSim::onPoseEvent);
-BOOST_CLASS_EXPORT(MyoSim::onOrientationDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onAccelerometerDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onGyroscopeDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onRssiEvent);
-BOOST_CLASS_EXPORT(MyoSim::onEmgDataEvent);
