@@ -14,7 +14,7 @@ class EventPlayer {
  public:
   explicit EventPlayer(MyoSim::Hub& hub);
 
-  void play(const EventSession& session,
+  void play(const EventSession& session, float playback_speed = 1,
             const std::function<void(void)>& periodic = [](){});
 
  private:
@@ -26,16 +26,15 @@ class EventPlayer {
 
 EventPlayer::EventPlayer(MyoSim::Hub& hub) : hub_(hub) {}
 
-void EventPlayer::play(const EventSession& session,
+void EventPlayer::play(const EventSession& session, float playback_speed,
                        const std::function<void(void)>& periodic) {
   int64_t previous_timestamp = findFirstTimestamp(session);
   for (const auto& group : session.events) {
     for (const auto& base_ptr : group.group) {
-      // TODO: add scaling factor to time to slow down or speed up replay.
       auto microsoecond_diff =
           std::chrono::microseconds(base_ptr->timestamp - previous_timestamp);
       auto now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(now + microsoecond_diff);
+      std::this_thread::sleep_until(now + (microsoecond_diff / playback_speed));
 
       if (auto ptr = dynamic_cast<onPairEvent*>(base_ptr.get())) {
         hub_.onPair(nullptr, ptr->timestamp, ptr->firmware_version);
