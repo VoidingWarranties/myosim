@@ -2,6 +2,31 @@
 
 using namespace MyoSim;
 
+Hub::Hub(const std::string& applicationIdentifier)
+    : myo::Hub(applicationIdentifier), myo_(nullptr) {}
+
+myo::Myo* Hub::waitForMyo(unsigned int milliseconds) {
+  myo_ = myo::Hub::waitForMyo(milliseconds);
+  return myo_;
+}
+
+void Hub::addListener(myo::DeviceListener* listener) {
+  listeners_.push_back(listener);
+}
+
+void Hub::removeListener(myo::DeviceListener* listener) {
+  // Find the listener in the list.
+  auto itr = listeners_.begin();
+  for (; itr != listeners_.end(); ++itr) {
+    if (*itr == listener) break;
+  }
+  // Remove the listener.
+  if (itr != listeners_.end()) listeners_.erase(itr);
+}
+
+void Hub::run(unsigned int duration_ms) { detectAndTriggerPose(); }
+void Hub::runOnce(unsigned int duration_ms) { detectAndTriggerPose(); }
+
 void Hub::onPair(myo::Myo* myo, uint64_t timestamp,
                  myo::FirmwareVersion firmware_version) {
   for (auto listener : listeners_) {
@@ -89,5 +114,36 @@ void Hub::onRssi(myo::Myo* myo, uint64_t timestamp, int8_t rssi) {
 void Hub::onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg) {
   for (auto listener : listeners_) {
     listener->onEmgData(myo, timestamp, emg);
+  }
+}
+
+void Hub::detectAndTriggerPose() {
+  std::string pose_str;
+  std::cin >> pose_str;
+  myo::Pose pose;
+  if (pose_str == "rest")
+    pose = myo::Pose::rest;
+  else if (pose_str == "fist")
+    pose = myo::Pose::fist;
+  else if (pose_str == "waveIn")
+    pose = myo::Pose::waveIn;
+  else if (pose_str == "waveOut")
+    pose = myo::Pose::waveOut;
+  else if (pose_str == "fingersSpread")
+    pose = myo::Pose::fingersSpread;
+  else if (pose_str == "doubleTap")
+    pose = myo::Pose::doubleTap;
+  else if (pose_str == "unknown")
+    pose = myo::Pose::unknown;
+  else {
+    std::cerr
+        << "MyoSimulator: \"" << pose_str << "\" is not a valid pose. "
+        << "Valid poses are:\n"
+        << "  rest, fist, waveIn, waveOut, fingersSpread, doubleTap, unknown."
+        << std::endl;
+    return;
+  }
+  for (auto itr = listeners_.begin(); itr != listeners_.end(); ++itr) {
+    (*itr)->onPose(myo_, 0, pose);
   }
 }
