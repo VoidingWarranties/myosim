@@ -36,7 +36,8 @@ class Hub : public myo::Hub {
                  myo::FirmwareVersion firmware_version);
   void onDisconnect(myo::Myo* myo, uint64_t timestamp);
   void onArmSync(myo::Myo* myo, uint64_t timestamp, myo::Arm arm,
-                 myo::XDirection x_direction);
+                 myo::XDirection x_direction, float rotation,
+                 myo::WarmupState warmupState);
   void onArmUnsync(myo::Myo* myo, uint64_t timestamp);
   void onUnlock(myo::Myo* myo, uint64_t timestamp);
   void onLock(myo::Myo* myo, uint64_t timestamp);
@@ -48,7 +49,10 @@ class Hub : public myo::Hub {
   void onGyroscopeData(myo::Myo* myo, uint64_t timestamp,
                        const myo::Vector3<float>& gyro);
   void onRssi(myo::Myo* myo, uint64_t timestamp, int8_t rssi);
+  void onBatteryLevelReceived(myo::Myo* myo, uint64_t timestamp, uint8_t level);
   void onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg);
+  void onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
+                         myo::WarmupResult warmupResult);
 
  private:
   void detectAndTriggerPose();

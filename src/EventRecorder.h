@@ -10,21 +10,23 @@ namespace MyoSim {
 class EventRecorder : public myo::DeviceListener {
  public:
   enum EventTypes {
-    PAIR                = 1 << 0,
-    UNPAIR              = 1 << 1,
-    CONNECT             = 1 << 2,
-    DISCONNECT          = 1 << 3,
-    ARM_SYNC            = 1 << 4,
-    ARM_UNSYNC          = 1 << 5,
-    UNLOCK              = 1 << 6,
-    LOCK                = 1 << 7,
-    POSE                = 1 << 8,
-    ORIENTATION_DATA    = 1 << 9,
-    ACCELEROMETER_DATA  = 1 << 10,
-    GYROSCOPE_DATA      = 1 << 11,
-    RSSI                = 1 << 12,
-    EMG                 = 1 << 13,
-    ALL_EVENT_TYPES     = (1 << 14) - 1
+    PAIR                   = 1 << 0,
+    UNPAIR                 = 1 << 1,
+    CONNECT                = 1 << 2,
+    DISCONNECT             = 1 << 3,
+    ARM_SYNC               = 1 << 4,
+    ARM_UNSYNC             = 1 << 5,
+    UNLOCK                 = 1 << 6,
+    LOCK                   = 1 << 7,
+    POSE                   = 1 << 8,
+    ORIENTATION_DATA       = 1 << 9,
+    ACCELEROMETER_DATA     = 1 << 10,
+    GYROSCOPE_DATA         = 1 << 11,
+    RSSI                   = 1 << 12,
+    BATTERY_LEVEL_RECEIVED = 1 << 13,
+    EMG                    = 1 << 14,
+    WARMUP_COMPLETED       = 1 << 15,
+    ALL_EVENT_TYPES        = (1 << 16) - 1
   };
 
   explicit EventRecorder(EventTypes event_types);
@@ -44,7 +46,8 @@ class EventRecorder : public myo::DeviceListener {
                          myo::FirmwareVersion firmwareVersion) override;
   virtual void onDisconnect(myo::Myo* myo, uint64_t timestamp) override;
   virtual void onArmSync(myo::Myo* myo, uint64_t timestamp, myo::Arm arm,
-                         myo::XDirection xDirection) override;
+                         myo::XDirection xDirection, float rotation,
+                         myo::WarmupState warmupState) override;
   virtual void onArmUnsync(myo::Myo* myo, uint64_t timestamp) override;
   virtual void onUnlock(myo::Myo* myo, uint64_t timestamp) override;
   virtual void onLock(myo::Myo* myo, uint64_t timestamp) override;
@@ -58,8 +61,12 @@ class EventRecorder : public myo::DeviceListener {
   virtual void onGyroscopeData(myo::Myo* myo, uint64_t timestamp,
                                const myo::Vector3<float>& gyro) override;
   virtual void onRssi(myo::Myo* myo, uint64_t timestamp, int8_t rssi) override;
+  virtual void onBatteryLevelReceived(myo::Myo* myo, uint64_t timestamp,
+                                      uint8_t level) override;
   virtual void onEmgData(myo::Myo* myo, uint64_t timestamp,
                          const int8_t* emg) override;
+  virtual void onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
+                                 myo::WarmupResult warmupResult) override;
 
  private:
   // Add an event to the current event group.

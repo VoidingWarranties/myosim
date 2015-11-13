@@ -20,4 +20,6 @@ BOOST_CLASS_EXPORT(MyoSim::onOrientationDataEvent);
 BOOST_CLASS_EXPORT(MyoSim::onAccelerometerDataEvent);
 BOOST_CLASS_EXPORT(MyoSim::onGyroscopeDataEvent);
 BOOST_CLASS_EXPORT(MyoSim::onRssiEvent);
+BOOST_CLASS_EXPORT(MyoSim::onBatteryLevelReceivedEvent);
 BOOST_CLASS_EXPORT(MyoSim::onEmgDataEvent);
+BOOST_CLASS_EXPORT(MyoSim::onWarmupCompletedEvent);

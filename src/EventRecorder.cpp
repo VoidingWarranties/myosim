@@ -35,10 +35,12 @@ void EventRecorder::onDisconnect(myo::Myo* myo, uint64_t timestamp) {
 }
 
 void EventRecorder::onArmSync(myo::Myo* myo, uint64_t timestamp, myo::Arm arm,
-                              myo::XDirection xDirection) {
+                              myo::XDirection xDirection, float rotation,
+                              myo::WarmupState warmupState) {
   if (!(event_types_ & ARM_SYNC)) return;
   addEvent(std::make_shared<onArmSyncEvent>(GetOrAddMyoIndex(myo), timestamp,
-                                            arm, xDirection));
+                                            arm, xDirection, rotation,
+                                            warmupState));
 }
 
 void EventRecorder::onArmUnsync(myo::Myo* myo, uint64_t timestamp) {
@@ -90,11 +92,25 @@ void EventRecorder::onRssi(myo::Myo* myo, uint64_t timestamp, int8_t rssi) {
       std::make_shared<onRssiEvent>(GetOrAddMyoIndex(myo), timestamp, rssi));
 }
 
+void EventRecorder::onBatteryLevelReceived(myo::Myo* myo, uint64_t timestamp,
+                                           uint8_t level) {
+  if (!(event_types_ & BATTERY_LEVEL_RECEIVED)) return;
+  addEvent(std::make_shared<onBatteryLevelReceivedEvent>(GetOrAddMyoIndex(myo),
+                                                         timestamp, level));
+}
+
 void EventRecorder::onEmgData(myo::Myo* myo, uint64_t timestamp,
                               const int8_t* const emg) {
   if (!(event_types_ & EMG)) return;
   addEvent(
       std::make_shared<onEmgDataEvent>(GetOrAddMyoIndex(myo), timestamp, emg));
+}
+
+void EventRecorder::onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
+                                      myo::WarmupResult warmupResult) {
+  if (!(event_types_ & WARMUP_COMPLETED)) return;
+  addEvent(std::make_shared<onWarmupCompletedEvent>(GetOrAddMyoIndex(myo),
+                                                    timestamp, warmupResult));
 }
 
 void EventRecorder::addEvent(const std::shared_ptr<MyoEvent>& event) {

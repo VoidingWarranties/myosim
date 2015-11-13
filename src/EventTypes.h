@@ -197,17 +197,26 @@ struct onDisconnectEvent : MyoEvent {
 struct onArmSyncEvent : MyoEvent {
   onArmSyncEvent() {}
   onArmSyncEvent(int myo_index, uint64_t timestamp, myo::Arm arm,
-                 myo::XDirection x_direction)
-      : MyoEvent(myo_index, timestamp), arm(arm), x_direction(x_direction) {}
+                 myo::XDirection x_direction, float rotation,
+                 myo::WarmupState warmupState)
+      : MyoEvent(myo_index, timestamp),
+        arm(arm),
+        x_direction(x_direction),
+        rotation(rotation),
+        warmupState(warmupState) {}
 
   myo::Arm arm;
   myo::XDirection x_direction;
+  float rotation;
+  myo::WarmupState warmupState;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
     ar & BOOST_SERIALIZATION_NVP(arm);
     ar & BOOST_SERIALIZATION_NVP(x_direction);
+    ar & BOOST_SERIALIZATION_NVP(rotation);
+    ar & BOOST_SERIALIZATION_NVP(warmupState);
   }
 };
 // myo::DeviceListener::onArmUnsync
@@ -316,6 +325,20 @@ struct onRssiEvent : MyoEvent {
     ar & BOOST_SERIALIZATION_NVP(rssi);
   }
 };
+// myo::DeviceListener::onBatteryLevelReceived
+struct onBatteryLevelReceivedEvent : MyoEvent {
+  onBatteryLevelReceivedEvent() {}
+  onBatteryLevelReceivedEvent(int myo_index, uint64_t timestamp, uint8_t level)
+      : MyoEvent(myo_index, timestamp), level(level) {}
+
+  uint8_t level;
+
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(level);
+  }
+};
 // myo::DeviceListener::onEmgData
 struct onEmgDataEvent : MyoEvent {
   onEmgDataEvent() {}
@@ -332,6 +355,21 @@ struct onEmgDataEvent : MyoEvent {
   void serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
     ar & BOOST_SERIALIZATION_NVP(emg);
+  }
+};
+// myo::DeviceListener::onWarmupCompleted
+struct onWarmupCompletedEvent : MyoEvent {
+  onWarmupCompletedEvent() {}
+  onWarmupCompletedEvent(int myo_index, uint64_t timestamp,
+                         myo::WarmupResult warmupResult)
+      : MyoEvent(myo_index, timestamp), warmupResult(warmupResult) {}
+
+  myo::WarmupResult warmupResult;
+
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
+    ar & BOOST_SERIALIZATION_NVP(warmupResult);
   }
 };
 }

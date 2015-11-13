@@ -23,7 +23,8 @@ void EventPlayer::play(const EventSession& session, float playback_speed,
       } else if (auto ptr = dynamic_cast<onDisconnectEvent*>(base_ptr.get())) {
         hub_.onDisconnect(nullptr, ptr->timestamp);
       } else if (auto ptr = dynamic_cast<onArmSyncEvent*>(base_ptr.get())) {
-        hub_.onArmSync(nullptr, ptr->timestamp, ptr->arm, ptr->x_direction);
+        hub_.onArmSync(nullptr, ptr->timestamp, ptr->arm, ptr->x_direction,
+                       ptr->rotation, ptr->warmupState);
       } else if (auto ptr = dynamic_cast<onArmUnsyncEvent*>(base_ptr.get())) {
         hub_.onArmUnsync(nullptr, ptr->timestamp);
       } else if (auto ptr = dynamic_cast<onUnlockEvent*>(base_ptr.get())) {
@@ -40,8 +41,12 @@ void EventPlayer::play(const EventSession& session, float playback_speed,
         hub_.onGyroscopeData(nullptr, ptr->timestamp, ptr->gyro);
       } else if (auto ptr = dynamic_cast<onRssiEvent*>(base_ptr.get())) {
         hub_.onRssi(nullptr, ptr->timestamp, ptr->rssi);
+      } else if (auto ptr = dynamic_cast<onBatteryLevelReceivedEvent*>(base_ptr.get())) {
+        hub_.onBatteryLevelReceived(nullptr, ptr->timestamp, ptr->level);
       } else if (auto ptr = dynamic_cast<onEmgDataEvent*>(base_ptr.get())) {
         hub_.onEmgData(nullptr, ptr->timestamp, ptr->emg);
+      } else if (auto ptr = dynamic_cast<onWarmupCompletedEvent*>(base_ptr.get())) {
+        hub_.onWarmupCompleted(nullptr, ptr->timestamp, ptr->warmupResult);
       }
       previous_timestamp = base_ptr->timestamp;
     }

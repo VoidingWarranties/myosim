@@ -54,9 +54,11 @@ void Hub::onDisconnect(myo::Myo* myo, uint64_t timestamp) {
 }
 
 void Hub::onArmSync(myo::Myo* myo, uint64_t timestamp, myo::Arm arm,
-                    myo::XDirection x_direction) {
+                    myo::XDirection x_direction, float rotation,
+                    myo::WarmupState warmupState) {
   for (auto listener : listeners_) {
-    listener->onArmSync(myo, timestamp, arm, x_direction);
+    listener->onArmSync(myo, timestamp, arm, x_direction, rotation,
+                        warmupState);
   }
 }
 
@@ -111,9 +113,23 @@ void Hub::onRssi(myo::Myo* myo, uint64_t timestamp, int8_t rssi) {
   }
 }
 
+void Hub::onBatteryLevelReceived(myo::Myo* myo, uint64_t timestamp,
+                                 uint8_t level) {
+  for (auto listener : listeners_) {
+    listener->onBatteryLevelReceived(myo, timestamp, level);
+  }
+}
+
 void Hub::onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg) {
   for (auto listener : listeners_) {
     listener->onEmgData(myo, timestamp, emg);
+  }
+}
+
+void Hub::onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
+                            myo::WarmupResult warmupResult) {
+  for (auto listener : listeners_) {
+    listener->onWarmupCompleted(myo, timestamp, warmupResult);
   }
 }
 
