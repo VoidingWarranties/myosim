@@ -12,9 +12,10 @@
 #include <vector>
 
 namespace {
-///////////////////////////////////////////////////
-// Structs for stealing private member variables //
-///////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+//               Structs for stealing private member variables               //
+// http://bloglitb.blogspot.com/2011/12/access-to-private-members-safer.html //
+///////////////////////////////////////////////////////////////////////////////
 template <typename Tag, typename Tag::type M>
 struct Rob {
   friend typename Tag::type get(Tag) { return M; }
@@ -191,17 +192,17 @@ struct onArmSyncEvent : MyoEvent {
   onArmSyncEvent() {}
   onArmSyncEvent(int myo_index, uint64_t timestamp, myo::Arm arm,
                  myo::XDirection x_direction, float rotation,
-                 myo::WarmupState warmupState)
+                 myo::WarmupState warmup_state)
       : MyoEvent(myo_index, timestamp),
         arm(arm),
         x_direction(x_direction),
         rotation(rotation),
-        warmupState(warmupState) {}
+        warmup_state(warmup_state) {}
 
   myo::Arm arm;
   myo::XDirection x_direction;
   float rotation;
-  myo::WarmupState warmupState;
+  myo::WarmupState warmup_state;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
@@ -209,7 +210,7 @@ struct onArmSyncEvent : MyoEvent {
     ar & BOOST_SERIALIZATION_NVP(arm);
     ar & BOOST_SERIALIZATION_NVP(x_direction);
     ar & BOOST_SERIALIZATION_NVP(rotation);
-    ar & BOOST_SERIALIZATION_NVP(warmupState);
+    ar & BOOST_SERIALIZATION_NVP(warmup_state);
   }
 };
 // myo::DeviceListener::onArmUnsync
@@ -354,15 +355,15 @@ struct onEmgDataEvent : MyoEvent {
 struct onWarmupCompletedEvent : MyoEvent {
   onWarmupCompletedEvent() {}
   onWarmupCompletedEvent(int myo_index, uint64_t timestamp,
-                         myo::WarmupResult warmupResult)
-      : MyoEvent(myo_index, timestamp), warmupResult(warmupResult) {}
+                         myo::WarmupResult warmup_result)
+      : MyoEvent(myo_index, timestamp), warmup_result(warmup_result) {}
 
-  myo::WarmupResult warmupResult;
+  myo::WarmupResult warmup_result;
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MyoEvent);
-    ar & BOOST_SERIALIZATION_NVP(warmupResult);
+    ar & BOOST_SERIALIZATION_NVP(warmup_result);
   }
 };
 }

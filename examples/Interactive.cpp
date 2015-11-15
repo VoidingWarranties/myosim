@@ -1,5 +1,6 @@
 #include <iostream>
 #include <myo/myo.hpp>
+
 #include "../src/Hub.h"
 
 class PrintListener : public myo::DeviceListener {
@@ -8,6 +9,24 @@ class PrintListener : public myo::DeviceListener {
     std::cout << "Detected pose! " << pose << std::endl;
   }
 };
+
+myo::Pose poseFromString(const std::string& pose_str) {
+  if (pose_str == "rest") {
+    return myo::Pose::rest;
+  } else if (pose_str == "fist") {
+    return myo::Pose::fist;
+  } else if (pose_str == "waveIn") {
+    return myo::Pose::waveIn;
+  } else if (pose_str == "waveOut") {
+    return myo::Pose::waveOut;
+  } else if (pose_str == "fingersSpread") {
+    return myo::Pose::fingersSpread;
+  } else if (pose_str == "doubleTap") {
+    return myo::Pose::doubleTap;
+  } else {
+    return myo::Pose::unknown;
+  }
+}
 
 int main() {
   try {
@@ -18,7 +37,10 @@ int main() {
 
     while (true) {
       std::cout << "Enter a pose: ";
-      hub.run(0);
+      std::string pose_str;
+      std::cin >> pose_str;
+      myo::Pose pose = poseFromString(pose_str);
+      hub.simulatePose(nullptr, 0, pose);
     }
   } catch (const std::exception& ex) {
     std::cerr << "Error: " << ex.what() << std::endl;
