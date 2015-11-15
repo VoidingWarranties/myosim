@@ -7,10 +7,6 @@ using namespace MyoSim;
 Hub::Hub(const std::string& application_identifier)
     : myo::Hub(application_identifier) {}
 
-myo::Myo* Hub::waitForMyo(unsigned int milliseconds) {
-  return myo::Hub::waitForMyo(milliseconds);
-}
-
 void Hub::addListener(myo::DeviceListener* listener) {
   listeners_.push_back(listener);
 }
@@ -20,8 +16,12 @@ void Hub::removeListener(myo::DeviceListener* listener) {
   if (itr != listeners_.end()) listeners_.erase(itr);
 }
 
-void Hub::run(unsigned int duration_ms) {}
-void Hub::runOnce(unsigned int duration_ms) {}
+void Hub::run(unsigned int duration_ms) {
+  // TODO: implement this (just waiting duration_ms)
+}
+void Hub::runOnce(unsigned int duration_ms) {
+  // TODO: implement this (just waiting duration_ms)
+}
 
 void Hub::simulatePair(myo::Myo* myo, uint64_t timestamp,
                        myo::FirmwareVersion firmware_version) {

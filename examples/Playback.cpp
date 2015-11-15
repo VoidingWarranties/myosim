@@ -1,7 +1,7 @@
 #include <iostream>
 #include <myo/myo.hpp>
 #include "../src/EventRecorder.h"
-#include "../src/EventPlayer.h"
+#include "../src/EventPlayerHub.h"
 #include "../src/Hub.h"
 
 class PrintListener : public myo::DeviceListener {
@@ -30,11 +30,10 @@ int main() {
     std::cout << "Events recorded. Press ENTER to replay events.";
     getchar();
 
-    MyoSim::Hub simulated_hub;
     PrintListener print_listener;
-    simulated_hub.addListener(&print_listener);
-    MyoSim::EventPlayer player(simulated_hub);
-    player.play(recorder.getEventSession());
+    MyoSim::EventPlayerHub player_hub(recorder.getEventSession());
+    player_hub.addListener(&print_listener);
+    player_hub.runAll();
 
   } catch (const std::exception& ex) {
     std::cerr << "Error: " << ex.what() << std::endl;

@@ -3,7 +3,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <myo/myo.hpp>
 #include "../src/EventRecorder.h"
-#include "../src/EventPlayer.h"
+#include "../src/EventPlayerHub.h"
 #include "../src/Hub.h"
 
 class PrintListener : public myo::DeviceListener {
@@ -55,9 +55,9 @@ int main() {
     // Replay event session.
     MyoSim::Hub simulated_hub;
     PrintListener print_listener;
-    simulated_hub.addListener(&print_listener);
-    MyoSim::EventPlayer player(simulated_hub);
-    player.play(deserialized_events);
+    MyoSim::EventPlayerHub player_hub(deserialized_events);
+    player_hub.addListener(&print_listener);
+    player_hub.runAll();
 
   } catch (const std::exception& ex) {
     std::cerr << "Error: " << ex.what() << std::endl;

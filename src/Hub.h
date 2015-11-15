@@ -9,15 +9,12 @@
 namespace MyoSim {
 class Hub : public myo::Hub {
  public:
-  Hub(const std::string& application_identifier = "");
+  explicit Hub(const std::string& application_identifier = "");
 
-  myo::Myo* waitForMyo(unsigned int milliseconds = 0);
   void addListener(myo::DeviceListener* listener);
   void removeListener(myo::DeviceListener* listener);
 
-  // duration_ms currently has no effect. Both of these functions will wait for
-  // user input before returning. This should be changed to more closely mimic
-  // the myo::Hub behavior.
+  // TODO: obey duration_ms argument
   void run(unsigned int duration_ms);
   void runOnce(unsigned int duration_ms);
 
