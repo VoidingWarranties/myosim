@@ -129,14 +129,7 @@ struct EventLoopGroup {
 };
 // Used to group EventLoopGroups together. This represents all of the events
 // recorded in one Myo session.
-struct EventSession {
-  std::vector<EventLoopGroup> events;
-
-  template <class Archive>
-  void serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_NVP(events);
-  }
-};
+typedef std::vector<EventLoopGroup> EventSession;
 
 ////////////////////////////////////////
 // Structs for storing raw Myo events //

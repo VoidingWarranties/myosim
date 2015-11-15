@@ -7,7 +7,7 @@ EventPlayer::EventPlayer(MyoSim::Hub& hub) : hub_(hub) {}
 void EventPlayer::play(const EventSession& session, float playback_speed,
                        const std::function<void(void)>& periodic) {
   int64_t previous_timestamp = findFirstTimestamp(session);
-  for (const auto& group : session.events) {
+  for (const auto& group : session) {
     for (const auto& base_ptr : group.group) {
       auto microsoecond_diff =
           std::chrono::microseconds(base_ptr->timestamp - previous_timestamp);
@@ -56,7 +56,7 @@ void EventPlayer::play(const EventSession& session, float playback_speed,
 }
 
 int64_t EventPlayer::findFirstTimestamp(const EventSession& session) {
-  for (const auto& group : session.events) {
+  for (const auto& group : session) {
     for (const auto& base_ptr : group.group) {
       return base_ptr->timestamp;
     }

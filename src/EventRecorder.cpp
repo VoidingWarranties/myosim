@@ -6,7 +6,7 @@ EventRecorder::EventRecorder(EventTypes event_types)
     : event_types_(event_types) {}
 
 void EventRecorder::endEventLoopGroup() {
-  events_.events.push_back(EventLoopGroup());
+  events_.push_back(EventLoopGroup());
 }
 
 void EventRecorder::onPair(myo::Myo* myo, uint64_t timestamp,
@@ -114,10 +114,10 @@ void EventRecorder::onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
 }
 
 void EventRecorder::addEvent(const std::shared_ptr<MyoEvent>& event) {
-  if (events_.events.empty()) {
+  if (events_.empty()) {
     endEventLoopGroup();
   }
-  events_.events.back().group.push_back(event);
+  events_.back().group.push_back(event);
 }
 
 int EventRecorder::GetOrAddMyoIndex(myo::Myo* myo) {
