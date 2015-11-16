@@ -100,10 +100,21 @@ void EventPlayerHub::runOnce(unsigned int duration_ms) {
 }
 
 void EventPlayerHub::simulateEvent(MyoEvent* p_event) {
-  // TODO: reorder if else statements in order of highest frequency.
-  //       e.g. put on{Accelerometer,Gyroscope,Orientation,Emg}Data first,
-  //            onPose second, etc...
-  if (auto ptr = dynamic_cast<PairEvent*>(p_event)) {
+  if (auto ptr = dynamic_cast<OrientationDataEvent*>(p_event)) {
+    simulateOrientationData(nullptr, ptr->timestamp, ptr->rotation);
+  } else if (auto ptr = dynamic_cast<AccelerometerDataEvent*>(p_event)) {
+    simulateAccelerometerData(nullptr, ptr->timestamp, ptr->accel);
+  } else if (auto ptr = dynamic_cast<GyroscopeDataEvent*>(p_event)) {
+    simulateGyroscopeData(nullptr, ptr->timestamp, ptr->gyro);
+  } else if (auto ptr = dynamic_cast<EmgDataEvent*>(p_event)) {
+    simulateEmgData(nullptr, ptr->timestamp, ptr->emg);
+  } else if (auto ptr = dynamic_cast<PoseEvent*>(p_event)) {
+    simulatePose(nullptr, ptr->timestamp, ptr->pose);
+  } else if (auto ptr = dynamic_cast<UnlockEvent*>(p_event)) {
+    simulateUnlock(nullptr, ptr->timestamp);
+  } else if (auto ptr = dynamic_cast<LockEvent*>(p_event)) {
+    simulateLock(nullptr, ptr->timestamp);
+  } else if (auto ptr = dynamic_cast<PairEvent*>(p_event)) {
     simulatePair(nullptr, ptr->timestamp, ptr->firmware_version);
   } else if (auto ptr = dynamic_cast<UnpairEvent*>(p_event)) {
     simulateUnpair(nullptr, ptr->timestamp);
@@ -116,24 +127,10 @@ void EventPlayerHub::simulateEvent(MyoEvent* p_event) {
                     ptr->rotation, ptr->warmup_state);
   } else if (auto ptr = dynamic_cast<ArmUnsyncEvent*>(p_event)) {
     simulateArmUnsync(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<UnlockEvent*>(p_event)) {
-    simulateUnlock(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<LockEvent*>(p_event)) {
-    simulateLock(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<PoseEvent*>(p_event)) {
-    simulatePose(nullptr, ptr->timestamp, ptr->pose);
-  } else if (auto ptr = dynamic_cast<OrientationDataEvent*>(p_event)) {
-    simulateOrientationData(nullptr, ptr->timestamp, ptr->rotation);
-  } else if (auto ptr = dynamic_cast<AccelerometerDataEvent*>(p_event)) {
-    simulateAccelerometerData(nullptr, ptr->timestamp, ptr->accel);
-  } else if (auto ptr = dynamic_cast<GyroscopeDataEvent*>(p_event)) {
-    simulateGyroscopeData(nullptr, ptr->timestamp, ptr->gyro);
   } else if (auto ptr = dynamic_cast<RssiEvent*>(p_event)) {
     simulateRssi(nullptr, ptr->timestamp, ptr->rssi);
   } else if (auto ptr = dynamic_cast<BatteryLevelReceivedEvent*>(p_event)) {
     simulateBatteryLevelReceived(nullptr, ptr->timestamp, ptr->level);
-  } else if (auto ptr = dynamic_cast<EmgDataEvent*>(p_event)) {
-    simulateEmgData(nullptr, ptr->timestamp, ptr->emg);
   } else if (auto ptr = dynamic_cast<WarmupCompletedEvent*>(p_event)) {
     simulateWarmupCompleted(nullptr, ptr->timestamp, ptr->warmup_result);
   }
