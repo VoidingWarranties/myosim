@@ -20,13 +20,13 @@ Record and playback
 
 You can record events from the Myo into boost serializable structs using
 `EventRecorder`. The events can then be played back using `EventPlayerHub`. See
-(Playback.cpp)[examples/Playback.cpp] for a basic example and
-(Serialize.cpp)[examples/Serialize.cpp] for an example using boost serialization.
+[Playback.cpp](examples/Playback.cpp) for a basic example and
+[Serialize.cpp](examples/Serialize.cpp) for an example using boost serialization.
 
 Interactive mode
 ----------------
 
-(Interactive.cpp)[examples/Interactive.cpp] is an example of using `myosim::Hub`
+[Interactive.cpp](examples/Interactive.cpp) is an example of using `myosim::Hub`
 interactively to wait for pose input via stdin and then simulating the
 corresponding pose.
 
