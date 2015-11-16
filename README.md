@@ -34,4 +34,4 @@ Known issues
 Dependecies
 -----------
 
-- [Boost](http://www.boost.org/)
+- [Boost](http://www.boost.org/)(optional - only needed if serializing events)
