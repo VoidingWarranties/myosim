@@ -13,14 +13,14 @@ class PrintListener : public myo::DeviceListener {
   }
 };
 
-void saveEvents(const MyoSim::EventSession& events, const std::string& file_path) {
+void saveEvents(const MyoSim::EventQueue& events, const std::string& file_path) {
   std::ofstream ofs(file_path);
   boost::archive::xml_oarchive oa(ofs);
   oa << BOOST_SERIALIZATION_NVP(events);
 }
 
-MyoSim::EventSession loadEvents(const std::string& file_path) {
-  MyoSim::EventSession events;
+MyoSim::EventQueue loadEvents(const std::string& file_path) {
+  MyoSim::EventQueue events;
   std::ifstream ifs(file_path);
   boost::archive::xml_iarchive ia(ifs);
   ia >> BOOST_SERIALIZATION_NVP(events);
@@ -43,7 +43,7 @@ int main() {
     myo->lock();
 
     // Serialize event session.
-    saveEvents(recorder.getEventSession(), "serialized_events");
+    saveEvents(recorder.getEventQueue(), "serialized_events");
 
     std::cout << "Events recorded and serialized. "
               << "Press ENTER to deserialize and replay events.";

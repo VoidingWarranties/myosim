@@ -31,10 +31,10 @@ class EventRecorder : public myo::DeviceListener {
 
   explicit EventRecorder(EventTypes event_types);
 
-  // Call this function after each call to Hub::run or Hub::runOnce.
-  void endEventLoopGroup();
-
-  EventSession getEventSession() const { return events_; }
+  // Call this function after each call to Hub::run or Hub::runOnce to mark the
+  // end of an event group.
+  void onPeriodic();
+  EventQueue getEventQueue() const;
 
   ///////////////////////////////////////////////////////////////////////
   // Virtual event functions that override functions in DeviceListener //
@@ -53,9 +53,8 @@ class EventRecorder : public myo::DeviceListener {
   virtual void onLock(myo::Myo* myo, uint64_t timestamp) override;
   virtual void onPose(myo::Myo* myo, uint64_t timestamp,
                       myo::Pose pose) override;
-  virtual void onOrientationData(
-      myo::Myo* myo, uint64_t timestamp,
-      const myo::Quaternion<float>& rotation) override;
+  virtual void onOrientationData(myo::Myo* myo, uint64_t timestamp,
+                                 const myo::Quaternion<float>& rotation) override;
   virtual void onAccelerometerData(myo::Myo* myo, uint64_t timestamp,
                                    const myo::Vector3<float>& accel) override;
   virtual void onGyroscopeData(myo::Myo* myo, uint64_t timestamp,
@@ -69,13 +68,12 @@ class EventRecorder : public myo::DeviceListener {
                                  myo::WarmupResult warmupResult) override;
 
  private:
-  // Add an event to the current event group.
-  void addEvent(const std::shared_ptr<MyoEvent>& event);
-
   int GetOrAddMyoIndex(myo::Myo* myo);
 
-  EventTypes event_types_;
-  EventSession events_;
+  const EventTypes event_types_;
+  EventQueue events_;
   std::map<myo::Myo*, int> myo_indicies_;
 };
+
+EventRecorder::EventTypes operator|(EventRecorder::EventTypes a, EventRecorder::EventTypes b);
 }

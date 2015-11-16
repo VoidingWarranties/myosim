@@ -11,13 +11,6 @@ class Hub : public myo::Hub {
  public:
   explicit Hub(const std::string& application_identifier = "");
 
-  void addListener(myo::DeviceListener* listener);
-  void removeListener(myo::DeviceListener* listener);
-
-  // TODO: obey duration_ms argument
-  void run(unsigned int duration_ms);
-  void runOnce(unsigned int duration_ms);
-
   /////////////////////////////////////////
   // Functions for simulating Myo events //
   /////////////////////////////////////////
@@ -46,8 +39,5 @@ class Hub : public myo::Hub {
   void simulateEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg);
   void simulateWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
                                myo::WarmupResult warmup_result);
-
- private:
-  std::list<myo::DeviceListener*> listeners_;
 };
 }

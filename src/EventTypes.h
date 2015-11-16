@@ -6,10 +6,13 @@
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
-#include <boost/serialization/vector.hpp>
+#include <boost/serialization/deque.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include <vector>
+#include <deque>
+#include <memory>
+
+// TODO: add an onPeriodicEvent
 
 namespace {
 ///////////////////////////////////////////////////////////////////////////////
@@ -99,10 +102,19 @@ namespace MyoSim {
 //////////////////////////////////////////////
 // Structs for storing groups of Myo events //
 //////////////////////////////////////////////
+struct Event {
+  Event() {}
+  virtual ~Event() {}
+
+  template <class Archive>
+  void serialize(Archive& ar, const unsigned int version) {
+  }
+};
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(Event);
 // Base struct to derive from for all myo events. Note that the pointer to the
 // myo is not stored, as Thalmic does not provide a way to construct a Myo
 // object from outside a Hub.
-struct MyoEvent {
+struct MyoEvent : Event {
   MyoEvent() {}
   MyoEvent(int myo_index, uint64_t timestamp)
       : myo_index(myo_index), timestamp(timestamp) {}
@@ -113,24 +125,24 @@ struct MyoEvent {
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Event);
     ar & BOOST_SERIALIZATION_NVP(myo_index);
     ar & BOOST_SERIALIZATION_NVP(timestamp);
   }
 };
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoEvent);
-// This struct is used to group events that occured in the same Hub::run() loop.
-struct EventLoopGroup {
-  // TODO: consider changing this to vector<unique_ptr<...>>
-  std::vector<std::shared_ptr<MyoEvent>> group;
+// Event that marks the end of a hub::run
+struct onPeriodicEvent : Event {
+  onPeriodicEvent() {}
 
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version) {
-    ar & BOOST_SERIALIZATION_NVP(group);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Event);
   }
 };
 // Used to group EventLoopGroups together. This represents all of the events
 // recorded in one Myo session.
-typedef std::vector<EventLoopGroup> EventSession;
+typedef std::deque<std::shared_ptr<Event>> EventQueue;
 
 ////////////////////////////////////////
 // Structs for storing raw Myo events //

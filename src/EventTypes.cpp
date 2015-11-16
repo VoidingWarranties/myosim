@@ -7,6 +7,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
+BOOST_CLASS_EXPORT(MyoSim::onPeriodicEvent);
 BOOST_CLASS_EXPORT(MyoSim::onPairEvent);
 BOOST_CLASS_EXPORT(MyoSim::onUnpairEvent);
 BOOST_CLASS_EXPORT(MyoSim::onConnectEvent);

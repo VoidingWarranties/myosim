@@ -31,7 +31,7 @@ int main() {
     getchar();
 
     PrintListener print_listener;
-    MyoSim::EventPlayerHub player_hub(recorder.getEventSession());
+    MyoSim::EventPlayerHub player_hub(recorder.getEventQueue());
     player_hub.addListener(&print_listener);
     player_hub.runAll();
 
