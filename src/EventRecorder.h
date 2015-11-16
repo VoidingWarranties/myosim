@@ -6,7 +6,7 @@
 
 #include "EventTypes.h"
 
-namespace MyoSim {
+namespace myosim {
 class EventRecorder : public myo::DeviceListener {
  public:
   enum EventTypes {
@@ -26,7 +26,7 @@ class EventRecorder : public myo::DeviceListener {
     BATTERY_LEVEL_RECEIVED = 1 << 13,
     EMG                    = 1 << 14,
     WARMUP_COMPLETED       = 1 << 15,
-    ALL_EVENT_TYPES        = (1 << 16) - 1
+    ALL_EVENTS             = (1 << 16) - 1
   };
 
   explicit EventRecorder(EventTypes event_types);
@@ -76,4 +76,4 @@ class EventRecorder : public myo::DeviceListener {
 };
 
 EventRecorder::EventTypes operator|(EventRecorder::EventTypes a, EventRecorder::EventTypes b);
-}
+} // namespace myosim

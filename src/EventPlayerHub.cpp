@@ -3,8 +3,7 @@
 #include <chrono>
 #include <thread>
 
-using namespace MyoSim;
-
+namespace myosim {
 EventPlayerHub::EventPlayerHub(const EventQueue& events, float playback_speed,
                                const std::string& application_identifier)
     : events_(events),
@@ -19,7 +18,7 @@ EventPlayerHub::EventPlayerHub(const EventQueue& events, float playback_speed,
 
 void EventPlayerHub::popOnPeriodicEvents() {
   while (! events_.empty() &&
-         dynamic_cast<onPeriodicEvent*>(events_.front().get())) {
+         dynamic_cast<PeriodicEvent*>(events_.front().get())) {
     events_.pop_front();
   }
 }
@@ -31,11 +30,11 @@ void EventPlayerHub::runAll(const std::function<void(void)>& periodic) {
   popOnPeriodicEvents();
   if (! events_.empty()) {
     // We can static_cast here because popOnPeriodicEvents removed all the
-    // onPeriodicEvents and those are the only events that are not MyoEvents.
+    // PeriodicEvents and those are the only events that are not MyoEvents.
     tmus_previous = static_cast<MyoEvent*>(events_.front().get())->timestamp;
   }
   while (! events_.empty()) {
-    if (auto ptr = dynamic_cast<onPeriodicEvent*>(events_.front().get())) {
+    if (auto ptr = dynamic_cast<PeriodicEvent*>(events_.front().get())) {
       periodic();
     } else if (auto ptr = dynamic_cast<MyoEvent*>(events_.front().get())) {
       auto dtcms = std::chrono::microseconds(ptr->timestamp - tmus_previous);
@@ -104,38 +103,39 @@ void EventPlayerHub::simulateEvent(MyoEvent* p_event) {
   // TODO: reorder if else statements in order of highest frequency.
   //       e.g. put on{Accelerometer,Gyroscope,Orientation,Emg}Data first,
   //            onPose second, etc...
-  if (auto ptr = dynamic_cast<onPairEvent*>(p_event)) {
+  if (auto ptr = dynamic_cast<PairEvent*>(p_event)) {
     simulatePair(nullptr, ptr->timestamp, ptr->firmware_version);
-  } else if (auto ptr = dynamic_cast<onUnpairEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<UnpairEvent*>(p_event)) {
     simulateUnpair(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<onConnectEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<ConnectEvent*>(p_event)) {
     simulateConnect(nullptr, ptr->timestamp, ptr->firmware_version);
-  } else if (auto ptr = dynamic_cast<onDisconnectEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<DisconnectEvent*>(p_event)) {
     simulateDisconnect(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<onArmSyncEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<ArmSyncEvent*>(p_event)) {
     simulateArmSync(nullptr, ptr->timestamp, ptr->arm, ptr->x_direction,
                     ptr->rotation, ptr->warmup_state);
-  } else if (auto ptr = dynamic_cast<onArmUnsyncEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<ArmUnsyncEvent*>(p_event)) {
     simulateArmUnsync(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<onUnlockEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<UnlockEvent*>(p_event)) {
     simulateUnlock(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<onLockEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<LockEvent*>(p_event)) {
     simulateLock(nullptr, ptr->timestamp);
-  } else if (auto ptr = dynamic_cast<onPoseEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<PoseEvent*>(p_event)) {
     simulatePose(nullptr, ptr->timestamp, ptr->pose);
-  } else if (auto ptr = dynamic_cast<onOrientationDataEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<OrientationDataEvent*>(p_event)) {
     simulateOrientationData(nullptr, ptr->timestamp, ptr->rotation);
-  } else if (auto ptr = dynamic_cast<onAccelerometerDataEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<AccelerometerDataEvent*>(p_event)) {
     simulateAccelerometerData(nullptr, ptr->timestamp, ptr->accel);
-  } else if (auto ptr = dynamic_cast<onGyroscopeDataEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<GyroscopeDataEvent*>(p_event)) {
     simulateGyroscopeData(nullptr, ptr->timestamp, ptr->gyro);
-  } else if (auto ptr = dynamic_cast<onRssiEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<RssiEvent*>(p_event)) {
     simulateRssi(nullptr, ptr->timestamp, ptr->rssi);
-  } else if (auto ptr = dynamic_cast<onBatteryLevelReceivedEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<BatteryLevelReceivedEvent*>(p_event)) {
     simulateBatteryLevelReceived(nullptr, ptr->timestamp, ptr->level);
-  } else if (auto ptr = dynamic_cast<onEmgDataEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<EmgDataEvent*>(p_event)) {
     simulateEmgData(nullptr, ptr->timestamp, ptr->emg);
-  } else if (auto ptr = dynamic_cast<onWarmupCompletedEvent*>(p_event)) {
+  } else if (auto ptr = dynamic_cast<WarmupCompletedEvent*>(p_event)) {
     simulateWarmupCompleted(nullptr, ptr->timestamp, ptr->warmup_result);
   }
 }
+} // namespace myosim

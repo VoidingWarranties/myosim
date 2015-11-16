@@ -17,14 +17,14 @@ class PrintListener : public myo::DeviceListener {
   }
 };
 
-void saveEvents(const MyoSim::EventQueue& events, const std::string& file_path) {
+void saveEvents(const myosim::EventQueue& events, const std::string& file_path) {
   std::ofstream ofs(file_path);
   boost::archive::xml_oarchive oa(ofs);
   oa << BOOST_SERIALIZATION_NVP(events);
 }
 
-MyoSim::EventQueue loadEvents(const std::string& file_path) {
-  MyoSim::EventQueue events;
+myosim::EventQueue loadEvents(const std::string& file_path) {
+  myosim::EventQueue events;
   std::ifstream ifs(file_path);
   boost::archive::xml_iarchive ia(ifs);
   ia >> BOOST_SERIALIZATION_NVP(events);
@@ -39,7 +39,7 @@ int main() {
       throw std::runtime_error("Unable to find a Myo!");
     }
     // Record only pose events.
-    MyoSim::EventRecorder recorder(MyoSim::EventRecorder::POSE);
+    myosim::EventRecorder recorder(myosim::EventRecorder::POSE);
     hub.addListener(&recorder);
     // Record for 5 seconds.
     myo->unlock(myo::Myo::unlockHold);
@@ -57,9 +57,9 @@ int main() {
     auto deserialized_events = loadEvents("serialized_events");
 
     // Replay event session.
-    MyoSim::Hub simulated_hub;
+    myosim::Hub simulated_hub;
     PrintListener print_listener;
-    MyoSim::EventPlayerHub player_hub(deserialized_events);
+    myosim::EventPlayerHub player_hub(deserialized_events);
     player_hub.addListener(&print_listener);
     player_hub.runAll();
 

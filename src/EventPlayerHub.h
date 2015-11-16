@@ -6,7 +6,7 @@
 #include "Hub.h"
 #include "EventTypes.h"
 
-namespace MyoSim {
+namespace myosim {
 class EventPlayerHub : public Hub {
  public:
   explicit EventPlayerHub(const EventQueue& events, float playback_speed = 1,
@@ -24,4 +24,4 @@ class EventPlayerHub : public Hub {
   EventQueue events_;
   uint64_t tmus_previous_run_end_;
 };
-}
+} // namespace myosim

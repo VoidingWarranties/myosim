@@ -30,7 +30,7 @@ myo::Pose poseFromString(const std::string& pose_str) {
 
 int main() {
   try {
-    MyoSim::Hub hub("com.voidingwarranties.myo-simulator-example");
+    myosim::Hub hub("com.voidingwarranties.myo-simulator-example");
 
     PrintListener print_listener;
     hub.addListener(&print_listener);

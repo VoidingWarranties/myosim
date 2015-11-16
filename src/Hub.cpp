@@ -2,8 +2,7 @@
 
 #include <algorithm>
 
-using namespace MyoSim;
-
+namespace myosim {
 Hub::Hub(const std::string& application_identifier)
     : myo::Hub(application_identifier) {}
 
@@ -114,3 +113,4 @@ void Hub::simulateWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
     listener->onWarmupCompleted(myo, timestamp, warmup_result);
   }
 }
+} // namespace myosim

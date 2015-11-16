@@ -14,26 +14,26 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoSim::Event);
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(MyoSim::MyoEvent);
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::Event);
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::MyoEvent);
 
-BOOST_CLASS_EXPORT(MyoSim::onPeriodicEvent);
-BOOST_CLASS_EXPORT(MyoSim::onPairEvent);
-BOOST_CLASS_EXPORT(MyoSim::onUnpairEvent);
-BOOST_CLASS_EXPORT(MyoSim::onConnectEvent);
-BOOST_CLASS_EXPORT(MyoSim::onDisconnectEvent);
-BOOST_CLASS_EXPORT(MyoSim::onArmSyncEvent);
-BOOST_CLASS_EXPORT(MyoSim::onArmUnsyncEvent);
-BOOST_CLASS_EXPORT(MyoSim::onUnlockEvent);
-BOOST_CLASS_EXPORT(MyoSim::onLockEvent);
-BOOST_CLASS_EXPORT(MyoSim::onPoseEvent);
-BOOST_CLASS_EXPORT(MyoSim::onOrientationDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onAccelerometerDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onGyroscopeDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onRssiEvent);
-BOOST_CLASS_EXPORT(MyoSim::onBatteryLevelReceivedEvent);
-BOOST_CLASS_EXPORT(MyoSim::onEmgDataEvent);
-BOOST_CLASS_EXPORT(MyoSim::onWarmupCompletedEvent);
+BOOST_CLASS_EXPORT(myosim::PeriodicEvent);
+BOOST_CLASS_EXPORT(myosim::PairEvent);
+BOOST_CLASS_EXPORT(myosim::UnpairEvent);
+BOOST_CLASS_EXPORT(myosim::ConnectEvent);
+BOOST_CLASS_EXPORT(myosim::DisconnectEvent);
+BOOST_CLASS_EXPORT(myosim::ArmSyncEvent);
+BOOST_CLASS_EXPORT(myosim::ArmUnsyncEvent);
+BOOST_CLASS_EXPORT(myosim::UnlockEvent);
+BOOST_CLASS_EXPORT(myosim::LockEvent);
+BOOST_CLASS_EXPORT(myosim::PoseEvent);
+BOOST_CLASS_EXPORT(myosim::OrientationDataEvent);
+BOOST_CLASS_EXPORT(myosim::AccelerometerDataEvent);
+BOOST_CLASS_EXPORT(myosim::GyroscopeDataEvent);
+BOOST_CLASS_EXPORT(myosim::RssiEvent);
+BOOST_CLASS_EXPORT(myosim::BatteryLevelReceivedEvent);
+BOOST_CLASS_EXPORT(myosim::EmgDataEvent);
+BOOST_CLASS_EXPORT(myosim::WarmupCompletedEvent);
 
 namespace {
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ struct Vector3_data {
   friend type get(Vector3_data);
 };
 template struct Rob<Vector3_data<float>, &myo::Vector3<float>::_data>;
-}
+} // namespace
 
 namespace boost {
 namespace serialization {
@@ -123,139 +123,154 @@ void serialize(Archive& ar, myo::Vector3<T>& vec, const unsigned int version) {
 // Functions for serializing grouping structs //
 ////////////////////////////////////////////////
 // Event
-/*
-template <class Archive>
-void serialize(Archive& ar, MyoSim::Event& event, const unsigned int version) {
-}
-*/
+// The Serialize function for myosim::Event is in EventTypes.h.
+// See the comment there for more information.
+
 // MyoEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::MyoEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::MyoEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "Event", boost::serialization::base_object<MyoSim::Event>(event));
+      "Event", boost::serialization::base_object<myosim::Event>(event));
   ar & BOOST_SERIALIZATION_NVP(event.myo_index);
   ar & BOOST_SERIALIZATION_NVP(event.timestamp);
 }
-// onPeriodicEvent
+// PeriodicEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onPeriodicEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::PeriodicEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "Event", boost::serialization::base_object<MyoSim::Event>(event));
+      "Event", boost::serialization::base_object<myosim::Event>(event));
 }
 
 /////////////////////////////////////////////////
 // Functions for serializing myo event structs //
 /////////////////////////////////////////////////
-// onPairEvent
+// PairEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onPairEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::PairEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.firmware_version);
 }
-// onUnpairEvent
+// UnpairEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onUnpairEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::UnpairEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
 }
-// onConnectEvent
+// ConnectEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onConnectEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::ConnectEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.firmware_version);
 }
-// onDisconnectEvent
+// DisconnectEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onDisconnectEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::DisconnectEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
 }
-// onArmSyncEvent
+// ArmSyncEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onArmSyncEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::ArmSyncEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.arm);
   ar & BOOST_SERIALIZATION_NVP(event.x_direction);
   ar & BOOST_SERIALIZATION_NVP(event.rotation);
   ar & BOOST_SERIALIZATION_NVP(event.warmup_state);
 }
-// onArmUnsyncEvent
+// ArmUnsyncEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onArmUnsyncEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::ArmUnsyncEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
 }
-// onUnlockEvent
+// UnlockEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onUnlockEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::UnlockEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
 }
-// onLockEvent
+// LockEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onLockEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::LockEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
 }
-// onPoseEvent
+// PoseEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onPoseEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::PoseEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.pose);
 }
-// onOrientationDataEvent
+// OrientationDataEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onOrientationDataEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::OrientationDataEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.rotation);
 }
-// onAccelerometerDataEvent
+// AccelerometerDataEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onAccelerometerDataEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::AccelerometerDataEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.accel);
 }
-// onGyroscopeDataEvent
+// GyroscopeDataEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onGyroscopeDataEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::GyroscopeDataEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.gyro);
 }
-// onRssiEvent
+// RssiEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onRssiEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::RssiEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.rssi);
 }
-// onBatteryLevelReceivedEvent
+// BatteryLevelReceivedEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onBatteryLevelReceivedEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::BatteryLevelReceivedEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.level);
 }
-// onEmgDataEvent
+// EmgDataEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onEmgDataEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::EmgDataEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.emg);
 }
-// onWarmupCompletedEvent
+// WarmupCompletedEvent
 template <class Archive>
-void serialize(Archive& ar, MyoSim::onWarmupCompletedEvent& event, const unsigned int version) {
+void serialize(Archive& ar, myosim::WarmupCompletedEvent& event,
+               const unsigned int version) {
   ar & boost::serialization::make_nvp(
-      "MyoEvent", boost::serialization::base_object<MyoSim::MyoEvent>(event));
+      "MyoEvent", boost::serialization::base_object<myosim::MyoEvent>(event));
   ar & BOOST_SERIALIZATION_NVP(event.warmup_result);
 }
-
-}
-}
+} // namespace serialization
+} // namespace boost

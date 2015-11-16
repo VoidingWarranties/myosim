@@ -13,14 +13,14 @@ class PrintListener : public myo::DeviceListener {
 
 int main() {
   try {
-    // An actual myo::Hub; NOT a MyoSim::Hub.
+    // An actual myo::Hub; NOT a myosim::Hub.
     myo::Hub hub("com.voidingwarranties.myo-simulator-example");
     myo::Myo* myo = hub.waitForMyo(10000);
     if (!myo) {
       throw std::runtime_error("Unable to find a Myo!");
     }
     // Record only pose events.
-    MyoSim::EventRecorder recorder(MyoSim::EventRecorder::POSE);
+    myosim::EventRecorder recorder(myosim::EventRecorder::POSE);
     hub.addListener(&recorder);
     // Record for 5 seconds.
     myo->unlock(myo::Myo::unlockHold);
@@ -31,7 +31,7 @@ int main() {
     getchar();
 
     PrintListener print_listener;
-    MyoSim::EventPlayerHub player_hub(recorder.getEventQueue());
+    myosim::EventPlayerHub player_hub(recorder.getEventQueue());
     player_hub.addListener(&print_listener);
     player_hub.runAll();
 

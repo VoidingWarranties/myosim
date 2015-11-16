@@ -6,7 +6,7 @@
 #include <string>
 #include <list>
 
-namespace MyoSim {
+namespace myosim {
 class Hub : public myo::Hub {
  public:
   explicit Hub(const std::string& application_identifier = "");
@@ -40,4 +40,4 @@ class Hub : public myo::Hub {
   void simulateWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
                                myo::WarmupResult warmup_result);
 };
-}
+} // namespace myosim
