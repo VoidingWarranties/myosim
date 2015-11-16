@@ -68,7 +68,7 @@ class EventRecorder : public myo::DeviceListener {
                                  myo::WarmupResult warmupResult) override;
 
  private:
-  int GetOrAddMyoIndex(myo::Myo* myo);
+  int getOrAddMyoIndex(myo::Myo* myo);
 
   const EventTypes event_types_;
   EventQueue events_;

@@ -4,34 +4,41 @@ MyoSimulator
 A library for simulating a Myo
 ------------------------------
 
-This library provides the `MyoSim::Hub` as a drop in replacement for
+This library provides the `myosim::Hub` as a drop in replacement for
 `myo::Hub`. You can simulate any Myo event (e.g. `onPose` or `onGyroscopeData`)
-by calling the corresponding function in `MyoSim::Hub`. The simulated hub will
+by calling the corresponding function in `myosim::Hub`. The simulated hub will
 call the corresponding functions in all of it's listeners in the order the
 listeners were added.
+
+Why?
+----
+
+Testing! Write better tests for Myo applications.
 
 Record and playback
 -------------------
 
 You can record events from the Myo into boost serializable structs using
-`EventRecorder`. The events can then be played back using `EventPlayer`.
+`EventRecorder`. The events can then be played back using `EventPlayerHub`. See
+(Playback.cpp)[examples/Playback.cpp] for a basic example and
+(Serialize.cpp)[examples/Serialize.cpp] for an example using boost serialization.
 
 Interactive mode
 ----------------
 
-`Hub::run` and `Hub::runOnce` are used to interactively simulate poses. The
-simulated hub will wait for pose input via stdin and then simulate the
+(Interactive.cpp)[examples/Interactive.cpp] is an example of using `myosim::Hub`
+interactively to wait for pose input via stdin and then simulating the
 corresponding pose.
 
 Known issues
 ------------
 
 - Myo objects cannot be created without a physical Myo. Therefore events are
-  simulated with a null Myo pointer unless a physical Myo is present. For event
-  playback, the same number of physical Myos must be present as there are in the
-  event session.
+  simulated with a null Myo pointer. In the future events will be simulated with
+  physical Myo if present. This will require the same number of physical Myos to
+  be present as there are in the event queue.
 
 Dependecies
 -----------
 
-- [Boost](http://www.boost.org/)(optional - only needed if serializing events)
+- [Boost](http://www.boost.org/) (optional - only needed if serializing events)
