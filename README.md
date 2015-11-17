@@ -34,9 +34,9 @@ Known issues
 ------------
 
 - Myo objects cannot be created without a physical Myo. Therefore events are
-  simulated with a null Myo pointer. In the future events will be simulated with
-  physical Myo if present. This will require the same number of physical Myos to
-  be present as there are in the event queue.
+  simulated with non-null Myo pointers only if the same number of myos are
+  present as were used in the EventQueue. Otherwise all events are simulated
+  with a null Myo pointer.
 
 Dependecies
 -----------
