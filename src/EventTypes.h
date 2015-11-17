@@ -11,14 +11,6 @@ namespace myosim {
 struct Event {
   Event() {}
   virtual ~Event() {}
-
-  // This serialize function is needed in order to compile with boost
-  // serialization. I tried putting it in SerializableEventTypes.cpp with all
-  // the other serialize functions, but clang fails to compile
-  // "boost/serialization/access.hpp:116:11: error: no member named 'serialize' in 'myosim::Event'"
-  // This isn't an issue because this function doesn't use any boost macros or functions.
-  template <class Archive>
-  void serialize(Archive& ar, const unsigned int version) {}
 };
 // Base struct to derive from for all myo events. Note that the pointer to the
 // myo is not stored, as Thalmic does not provide a way to construct a Myo
@@ -38,7 +30,14 @@ struct PeriodicEvent : Event {
 };
 // Used to group EventLoopGroups together. This represents all of the events
 // recorded in one Myo session.
-typedef std::deque<std::shared_ptr<Event>> EventQueue;
+struct EventQueue {
+  EventQueue() {}
+  EventQueue(size_t num_myos, const std::deque<std::shared_ptr<Event>>& queue)
+      : num_myos(num_myos), queue(queue) {}
+
+  size_t num_myos;
+  std::deque<std::shared_ptr<Event>> queue;
+};
 
 ////////////////////////////////////////
 // Structs for storing raw Myo events //

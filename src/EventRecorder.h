@@ -34,7 +34,7 @@ class EventRecorder : public myo::DeviceListener {
   // Call this function after each call to Hub::run or Hub::runOnce to mark the
   // end of an event group.
   void onPeriodic();
-  EventQueue getEventQueue() const;
+  EventQueue getEventQueue();
 
   ///////////////////////////////////////////////////////////////////////
   // Virtual event functions that override functions in DeviceListener //

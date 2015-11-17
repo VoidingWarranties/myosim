@@ -1,11 +1,10 @@
 #include <fstream>
-
-#include <boost/serialization/deque.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <myo/myo.hpp>
+
+#include "../src/SerializableEventTypes.h"
 #include "../src/EventRecorder.h"
 #include "../src/EventPlayerHub.h"
 #include "../src/Hub.h"

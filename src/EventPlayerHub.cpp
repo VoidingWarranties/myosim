@@ -11,15 +11,15 @@ EventPlayerHub::EventPlayerHub(const EventQueue& events, float playback_speed,
       tmus_previous_run_end_(0),
       Hub(application_identifier) {
   popOnPeriodicEvents();
-  if (! events_.empty()) {
-    tmus_previous_run_end_ = static_cast<MyoEvent*>(events_.front().get())->timestamp;
+  if (! events_.queue.empty()) {
+    tmus_previous_run_end_ = static_cast<MyoEvent*>(events_.queue.front().get())->timestamp;
   }
 }
 
 void EventPlayerHub::popOnPeriodicEvents() {
-  while (! events_.empty() &&
-         dynamic_cast<PeriodicEvent*>(events_.front().get())) {
-    events_.pop_front();
+  while (! events_.queue.empty() &&
+         dynamic_cast<PeriodicEvent*>(events_.queue.front().get())) {
+    events_.queue.pop_front();
   }
 }
 
@@ -28,22 +28,22 @@ void EventPlayerHub::runAll(const std::function<void(void)>& periodic) {
   // tc is time in std::chrono::stead_clock time
   uint64_t tmus_previous = 0;
   popOnPeriodicEvents();
-  if (! events_.empty()) {
+  if (! events_.queue.empty()) {
     // We can static_cast here because popOnPeriodicEvents removed all the
     // PeriodicEvents and those are the only events that are not MyoEvents.
-    tmus_previous = static_cast<MyoEvent*>(events_.front().get())->timestamp;
+    tmus_previous = static_cast<MyoEvent*>(events_.queue.front().get())->timestamp;
   }
-  while (! events_.empty()) {
-    if (auto ptr = dynamic_cast<PeriodicEvent*>(events_.front().get())) {
+  while (! events_.queue.empty()) {
+    if (auto ptr = dynamic_cast<PeriodicEvent*>(events_.queue.front().get())) {
       periodic();
-    } else if (auto ptr = dynamic_cast<MyoEvent*>(events_.front().get())) {
+    } else if (auto ptr = dynamic_cast<MyoEvent*>(events_.queue.front().get())) {
       auto dtcms = std::chrono::microseconds(ptr->timestamp - tmus_previous);
       auto tc_now = std::chrono::steady_clock::now();
       std::this_thread::sleep_until(tc_now + (dtcms / playback_speed_));
       simulateEvent(ptr);
       tmus_previous = ptr->timestamp;
     }
-    events_.pop_front();
+    events_.queue.pop_front();
   }
 }
 
@@ -53,8 +53,8 @@ void EventPlayerHub::run(unsigned int duration_ms) {
   uint64_t tmus_previous = tmus_previous_run_end_;
   uint64_t tmus_end = tmus_previous + (1000 * duration_ms);
   popOnPeriodicEvents();
-  while (! events_.empty()) {
-    auto ptr_event = static_cast<MyoEvent*>(events_.front().get());
+  while (! events_.queue.empty()) {
+    auto ptr_event = static_cast<MyoEvent*>(events_.queue.front().get());
     if (ptr_event->timestamp > tmus_end) {
       tmus_end = ptr_event->timestamp;
       break;
@@ -64,7 +64,7 @@ void EventPlayerHub::run(unsigned int duration_ms) {
       std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
       simulateEvent(ptr_event);
       tmus_previous = ptr_event->timestamp;
-      events_.pop_front();
+      events_.queue.pop_front();
       popOnPeriodicEvents();
     }
   }
@@ -80,8 +80,8 @@ void EventPlayerHub::runOnce(unsigned int duration_ms) {
   uint64_t tmus_previous = tmus_previous_run_end_;
   uint64_t tmus_end = tmus_previous + (1000 * duration_ms);
   popOnPeriodicEvents();
-  if (! events_.empty()) {
-    auto ptr_event = static_cast<MyoEvent*>(events_.front().get());
+  if (! events_.queue.empty()) {
+    auto ptr_event = static_cast<MyoEvent*>(events_.queue.front().get());
     if (ptr_event->timestamp <= tmus_end) {
       tmus_end = ptr_event->timestamp;
       auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
@@ -89,7 +89,7 @@ void EventPlayerHub::runOnce(unsigned int duration_ms) {
       std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
       tmus_previous_run_end_ = tmus_end;
       simulateEvent(ptr_event);
-      events_.pop_front();
+      events_.queue.pop_front();
       return;
     }
   }
