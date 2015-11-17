@@ -1,7 +1,8 @@
 #pragma once
 
-#include <myo/myo.hpp>
 #include <functional>
+#include <vector>
+#include <myo/myo.hpp>
 
 #include "Hub.h"
 #include "EventTypes.h"
@@ -23,5 +24,6 @@ class EventPlayerHub : public Hub {
   const float playback_speed_;
   EventQueue events_;
   uint64_t tmus_previous_run_end_;
+  std::vector<myo::Myo*> myos_;
 };
 } // namespace myosim

@@ -9,10 +9,22 @@ EventPlayerHub::EventPlayerHub(const EventQueue& events, float playback_speed,
     : events_(events),
       playback_speed_(playback_speed),
       tmus_previous_run_end_(0),
+      myos_(events.num_myos, nullptr),
       Hub(application_identifier) {
+  // Get the timestamp of the first myo event.
   popOnPeriodicEvents();
   if (! events_.queue.empty()) {
     tmus_previous_run_end_ = static_cast<MyoEvent*>(events_.queue.front().get())->timestamp;
+  }
+  // Get the same number of myos as used in the event queue.
+  for (size_t i_myo = 0; i_myo < myos_.size(); ++i_myo) {
+    myos_[i_myo] = myo::Hub::waitForMyo(10);
+    if (myos_[i_myo] == nullptr) {
+      for (size_t j_myo = 0; j_myo < i_myo; ++j_myo) {
+        myos_[j_myo] = nullptr;
+      }
+      break;
+    }
   }
 }
 
@@ -101,38 +113,38 @@ void EventPlayerHub::runOnce(unsigned int duration_ms) {
 
 void EventPlayerHub::simulateEvent(MyoEvent* p_event) {
   if (auto ptr = dynamic_cast<OrientationDataEvent*>(p_event)) {
-    simulateOrientationData(nullptr, ptr->timestamp, ptr->rotation);
+    simulateOrientationData(myos_[ptr->myo_index], ptr->timestamp, ptr->rotation);
   } else if (auto ptr = dynamic_cast<AccelerometerDataEvent*>(p_event)) {
-    simulateAccelerometerData(nullptr, ptr->timestamp, ptr->accel);
+    simulateAccelerometerData(myos_[ptr->myo_index], ptr->timestamp, ptr->accel);
   } else if (auto ptr = dynamic_cast<GyroscopeDataEvent*>(p_event)) {
-    simulateGyroscopeData(nullptr, ptr->timestamp, ptr->gyro);
+    simulateGyroscopeData(myos_[ptr->myo_index], ptr->timestamp, ptr->gyro);
   } else if (auto ptr = dynamic_cast<EmgDataEvent*>(p_event)) {
-    simulateEmgData(nullptr, ptr->timestamp, ptr->emg);
+    simulateEmgData(myos_[ptr->myo_index], ptr->timestamp, ptr->emg);
   } else if (auto ptr = dynamic_cast<PoseEvent*>(p_event)) {
-    simulatePose(nullptr, ptr->timestamp, ptr->pose);
+    simulatePose(myos_[ptr->myo_index], ptr->timestamp, ptr->pose);
   } else if (auto ptr = dynamic_cast<UnlockEvent*>(p_event)) {
-    simulateUnlock(nullptr, ptr->timestamp);
+    simulateUnlock(myos_[ptr->myo_index], ptr->timestamp);
   } else if (auto ptr = dynamic_cast<LockEvent*>(p_event)) {
-    simulateLock(nullptr, ptr->timestamp);
+    simulateLock(myos_[ptr->myo_index], ptr->timestamp);
   } else if (auto ptr = dynamic_cast<PairEvent*>(p_event)) {
-    simulatePair(nullptr, ptr->timestamp, ptr->firmware_version);
+    simulatePair(myos_[ptr->myo_index], ptr->timestamp, ptr->firmware_version);
   } else if (auto ptr = dynamic_cast<UnpairEvent*>(p_event)) {
-    simulateUnpair(nullptr, ptr->timestamp);
+    simulateUnpair(myos_[ptr->myo_index], ptr->timestamp);
   } else if (auto ptr = dynamic_cast<ConnectEvent*>(p_event)) {
-    simulateConnect(nullptr, ptr->timestamp, ptr->firmware_version);
+    simulateConnect(myos_[ptr->myo_index], ptr->timestamp, ptr->firmware_version);
   } else if (auto ptr = dynamic_cast<DisconnectEvent*>(p_event)) {
-    simulateDisconnect(nullptr, ptr->timestamp);
+    simulateDisconnect(myos_[ptr->myo_index], ptr->timestamp);
   } else if (auto ptr = dynamic_cast<ArmSyncEvent*>(p_event)) {
-    simulateArmSync(nullptr, ptr->timestamp, ptr->arm, ptr->x_direction,
-                    ptr->rotation, ptr->warmup_state);
+    simulateArmSync(myos_[ptr->myo_index], ptr->timestamp, ptr->arm,
+                    ptr->x_direction, ptr->rotation, ptr->warmup_state);
   } else if (auto ptr = dynamic_cast<ArmUnsyncEvent*>(p_event)) {
-    simulateArmUnsync(nullptr, ptr->timestamp);
+    simulateArmUnsync(myos_[ptr->myo_index], ptr->timestamp);
   } else if (auto ptr = dynamic_cast<RssiEvent*>(p_event)) {
-    simulateRssi(nullptr, ptr->timestamp, ptr->rssi);
+    simulateRssi(myos_[ptr->myo_index], ptr->timestamp, ptr->rssi);
   } else if (auto ptr = dynamic_cast<BatteryLevelReceivedEvent*>(p_event)) {
-    simulateBatteryLevelReceived(nullptr, ptr->timestamp, ptr->level);
+    simulateBatteryLevelReceived(myos_[ptr->myo_index], ptr->timestamp, ptr->level);
   } else if (auto ptr = dynamic_cast<WarmupCompletedEvent*>(p_event)) {
-    simulateWarmupCompleted(nullptr, ptr->timestamp, ptr->warmup_result);
+    simulateWarmupCompleted(myos_[ptr->myo_index], ptr->timestamp, ptr->warmup_result);
   }
 }
 } // namespace myosim

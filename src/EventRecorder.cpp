@@ -130,7 +130,7 @@ void EventRecorder::onWarmupCompleted(myo::Myo* myo, uint64_t timestamp,
                                                                  warmupResult));
 }
 
-int EventRecorder::getOrAddMyoIndex(myo::Myo* myo) {
+size_t EventRecorder::getOrAddMyoIndex(myo::Myo* myo) {
   if (myo_indicies_.count(myo) != 0) return myo_indicies_[myo];
   return myo_indicies_[myo] = myo_indicies_.size();
 }

@@ -17,11 +17,11 @@ struct Event {
 // object from outside a Hub.
 struct MyoEvent : Event {
   MyoEvent() {}
-  MyoEvent(int myo_index, uint64_t timestamp)
+  MyoEvent(size_t myo_index, uint64_t timestamp)
       : myo_index(myo_index), timestamp(timestamp) {}
   virtual ~MyoEvent() {}
 
-  int myo_index;
+  size_t myo_index;
   uint64_t timestamp;
 };
 // Event that marks the end of a hub::run
