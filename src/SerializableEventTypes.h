@@ -1,3 +1,10 @@
+/* This header file provides the necessary functions for serializing event types
+ * with boost's serialization library. Event serialization requires serializing
+ * all the relevant member variables in myo classes. Some of these member
+ * variables are private and therefore require a kludge to access them. This is
+ * necessary only for myo::Pose, myo::Quaternion, and myo::Vector.
+ */
+
 #pragma once
 
 #include <boost/serialization/base_object.hpp>
@@ -12,10 +19,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::Event);
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::MyoEvent);
 
 namespace {
-///////////////////////////////////////////////////////////////////////////////
-//               Structs for stealing private member variables               //
-// http://bloglitb.blogspot.com/2011/12/access-to-private-members-safer.html //
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//               Structs for stealing private member variables                //
+// http://bloglitb.blogspot.com/2011/12/access-to-private-members-safer.html  //
+//                                                                            //
+// Some myo classes have private member variables. Namely myo::Pose,          //
+// myo::Quaternion, and myo::Vector. These structs provide access to specific //
+// member variables of these classes. For example, to access the private      //
+// member variable myo::Pose::type:                                           //
+//     auto type = pose.*get(Pose_type())                                     //
+////////////////////////////////////////////////////////////////////////////////
 template <typename Tag, typename Tag::type M>
 struct Rob {
   friend typename Tag::type get(Tag) { return M; }
@@ -78,12 +91,14 @@ void serialize(Archive& ar, myo::FirmwareVersion& fv,
 // myo::Pose
 template <class Archive>
 void serialize(Archive& ar, myo::Pose& pose, const unsigned int version) {
+  // Steal private member variable pose.type.
   ar & boost::serialization::make_nvp("type", pose.*get(Pose_type()));
 }
 // myo::Quaternion<T>
 template <class Archive, class T>
 void serialize(Archive& ar, myo::Quaternion<T>& quat,
                const unsigned int version) {
+  // Steal private member variables quat.x/y/z/w.
   ar & boost::serialization::make_nvp("x", quat.*get(Quaternion_x<T>()));
   ar & boost::serialization::make_nvp("y", quat.*get(Quaternion_y<T>()));
   ar & boost::serialization::make_nvp("z", quat.*get(Quaternion_z<T>()));
@@ -92,6 +107,7 @@ void serialize(Archive& ar, myo::Quaternion<T>& quat,
 // myo::Vector3<T>
 template <class Archive, class T>
 void serialize(Archive& ar, myo::Vector3<T>& vec, const unsigned int version) {
+  // Steal private member variable vec.data.
   ar & boost::serialization::make_nvp("data", vec.*get(Vector3_data<T>()));
 }
 
