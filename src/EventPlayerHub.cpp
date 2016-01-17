@@ -96,26 +96,33 @@ void EventPlayerHub::run(unsigned int duration_ms) {
 void EventPlayerHub::runOnce(unsigned int duration_ms) {
   // tm is time in myo time
   // tc is time in std::chrono::stead_clock time
-  uint64_t tmus_previous = tmus_previous_run_end_;
-  uint64_t tmus_end = tmus_previous + (1000 * duration_ms);
+  uint64_t tmus_end = tmus_previous_run_end_ + (1000 * duration_ms);
+
   popOnPeriodicEvents();
   if (! events_.queue.empty()) {
+    // We can static_cast here because popOnPeriodicEvents removed all the
+    // PeriodicEvents and those are the only events that are not MyoEvents.
     auto ptr_event = static_cast<MyoEvent*>(events_.queue.front().get());
-    if (ptr_event->timestamp <= tmus_end) {
-      tmus_end = ptr_event->timestamp;
-      auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
+    if (ptr_event->timestamp > tmus_end) {
+      // Event doesn't occur in this call to runOnce. Wait until tmus_end.
+      auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous_run_end_);
       auto tc_now = std::chrono::steady_clock::now();
       std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      // Setup tmus_previous_run_end_ for next call to run or runOnce.
       tmus_previous_run_end_ = tmus_end;
-      simulateEvent(ptr_event);
-      events_.queue.pop_front();
       return;
+    } else {
+      // Wait until the event's timestamp.
+      auto dtcus = std::chrono::microseconds(ptr_event->timestamp - tmus_previous_run_end_);
+      auto tc_now = std::chrono::steady_clock::now();
+      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      // Simulate event.
+      simulateEvent(ptr_event);
+      // Setup for next call to run or runOnce.
+      tmus_previous_run_end_ = ptr_event->timestamp;
+      events_.queue.pop_front();
     }
   }
-  auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
-  auto tc_now = std::chrono::steady_clock::now();
-  std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
-  tmus_previous_run_end_ = tmus_end;
 }
 
 void EventPlayerHub::simulateEvent(MyoEvent* p_event) {
