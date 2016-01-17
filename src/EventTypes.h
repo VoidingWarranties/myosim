@@ -1,3 +1,8 @@
+/* Structs for storing myo events. All the arguments in an onEvent call are
+ * stored in the corresponding event struct. All events derive from the Event
+ * class.
+ */
+
 #pragma once
 
 #include <myo/myo.hpp>
@@ -5,9 +10,9 @@
 #include <memory>
 
 namespace myosim {
-//////////////////////////////////////////////
-// Structs for storing groups of Myo events //
-//////////////////////////////////////////////
+/////////////////////////////////
+// Structs for grouping events //
+/////////////////////////////////
 struct Event {
   Event() {}
   virtual ~Event() {}
@@ -24,7 +29,7 @@ struct MyoEvent : Event {
   size_t myo_index;
   uint64_t timestamp;
 };
-// Event that marks the end of a hub::run
+// Event that marks a call on EventRecorder::onPeriodic().
 struct PeriodicEvent : Event {
   PeriodicEvent() {}
 };
@@ -38,9 +43,9 @@ struct EventQueue {
   std::deque<std::shared_ptr<Event>> queue;
 };
 
-////////////////////////////////////////
-// Structs for storing raw Myo events //
-////////////////////////////////////////
+////////////////////////////////////
+// Structs for storing Myo events //
+////////////////////////////////////
 // myo::DeviceListener::onPair
 struct PairEvent : MyoEvent {
   PairEvent() {}
