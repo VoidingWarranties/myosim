@@ -28,8 +28,7 @@ struct MyoEvent : Event {
 struct PeriodicEvent : Event {
   PeriodicEvent() {}
 };
-// Used to group EventLoopGroups together. This represents all of the events
-// recorded in one Myo session.
+// Represents all of the events recorded in one Myo session.
 struct EventQueue {
   EventQueue() {}
   EventQueue(size_t num_myos, const std::deque<std::shared_ptr<Event>>& queue)
