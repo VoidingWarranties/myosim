@@ -1,3 +1,8 @@
+/* Hub derives from myo::Hub and provides helper functions for simulating
+ * events. Any call to simulateEvent will call the corresponding event on each
+ * of the hub's device listener.
+ */
+
 #pragma once
 
 #include <myo/myo.hpp>
