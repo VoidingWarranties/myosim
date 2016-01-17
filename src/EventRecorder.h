@@ -31,10 +31,11 @@ class EventRecorder : public myo::DeviceListener {
 
   explicit EventRecorder(EventTypes event_types);
 
+  EventQueue getEventQueue() const;
+
   // Call this function after each call to Hub::run or Hub::runOnce to mark the
   // end of an event group.
   void onPeriodic();
-  EventQueue getEventQueue();
 
   ///////////////////////////////////////////////////////////////////////
   // Virtual event functions that override functions in DeviceListener //
@@ -71,7 +72,7 @@ class EventRecorder : public myo::DeviceListener {
   size_t getMyoIndex(myo::Myo* myo);
 
   const EventTypes event_types_;
-  EventQueue events_;
+  std::deque<std::shared_ptr<Event>> events_;
   std::map<myo::Myo*, size_t> myo_indicies_;
 };
 
