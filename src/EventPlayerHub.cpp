@@ -64,26 +64,33 @@ void EventPlayerHub::run(unsigned int duration_ms) {
   // tc is time in std::chrono::stead_clock time
   uint64_t tmus_previous = tmus_previous_run_end_;
   uint64_t tmus_end = tmus_previous + (1000 * duration_ms);
+
   popOnPeriodicEvents();
   while (! events_.queue.empty()) {
+    // We can static_cast here because popOnPeriodicEvents removed all the
+    // PeriodicEvents and those are the only events that are not MyoEvents.
     auto ptr_event = static_cast<MyoEvent*>(events_.queue.front().get());
     if (ptr_event->timestamp > tmus_end) {
-      tmus_end = ptr_event->timestamp;
-      break;
+      // Event doesn't occur in this call to run. Wait until tmus_end.
+      auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
+      auto tc_now = std::chrono::steady_clock::now();
+      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      // Setup tmus_previous_run_end_ for next call to run or runOnce.
+      tmus_previous_run_end_ = tmus_end;
+      return;
     } else {
+      // Wait until the event's timestamp.
       auto dtcus = std::chrono::microseconds(ptr_event->timestamp - tmus_previous);
       auto tc_now = std::chrono::steady_clock::now();
       std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      // Simulate event.
       simulateEvent(ptr_event);
+      // Setup for next iteration of while loop.
       tmus_previous = ptr_event->timestamp;
       events_.queue.pop_front();
       popOnPeriodicEvents();
     }
   }
-  auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
-  auto tc_now = std::chrono::steady_clock::now();
-  std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
-  tmus_previous_run_end_ = tmus_end;
 }
 
 void EventPlayerHub::runOnce(unsigned int duration_ms) {
