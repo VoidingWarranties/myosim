@@ -1,3 +1,8 @@
+/* EventPlayerHub derives from Hub and provides new implementations of run and
+ * runOnce that hide myo::Hub's methods. runAll, run, and runOnce will replay
+ * the EventQueue given in the constructor.
+ */
+
 #pragma once
 
 #include <functional>
@@ -13,8 +18,13 @@ class EventPlayerHub : public Hub {
   explicit EventPlayerHub(const EventQueue& events, float playback_speed = 1,
                           const std::string& application_identifier = "");
 
+  // Simulates all events in the EventQueue, consuming the queue as it does so.
+  // periodic is called on every PeriodicEvent.
   void runAll(const std::function<void(void)>& periodic = [](){});
+  // Run the event loop simulation for the specified duration (in milliseconds).
   void run(unsigned int duration_ms);
+  // Run the event loop simulation until a single event occurs, or the specified
+  // duration (in milliseconds) has elapsed.
   void runOnce(unsigned int duration_ms);
 
  private:
