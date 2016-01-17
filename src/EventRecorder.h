@@ -1,3 +1,9 @@
+/* EventRecorder derives from myo::DeviceListener and stores myo events in their
+ * corresponding EventTypes in an EventType queue. It also provides the
+ * onPeriodic method to mark the beginning or end of a call to Hub::run or
+ * Hub::runOnce.
+ */
+
 #pragma once
 
 #include <myo/myo.hpp>
