@@ -50,8 +50,7 @@ void EventPlayerHub::runAll(const std::function<void(void)>& periodic) {
       periodic();
     } else if (auto ptr = dynamic_cast<MyoEvent*>(events_.queue.front().get())) {
       auto dtcms = std::chrono::microseconds(ptr->timestamp - tmus_previous);
-      auto tc_now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(tc_now + (dtcms / playback_speed_));
+      std::this_thread::sleep_for(dtcms / playback_speed_);
       simulateEvent(ptr);
       tmus_previous = ptr->timestamp;
     }
@@ -73,16 +72,14 @@ void EventPlayerHub::run(unsigned int duration_ms) {
     if (ptr_event->timestamp > tmus_end) {
       // Event doesn't occur in this call to run. Wait until tmus_end.
       auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous);
-      auto tc_now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      std::this_thread::sleep_for(dtcus / playback_speed_);
       // Setup tmus_previous_run_end_ for next call to run or runOnce.
       tmus_previous_run_end_ = tmus_end;
       return;
     } else {
       // Wait until the event's timestamp.
       auto dtcus = std::chrono::microseconds(ptr_event->timestamp - tmus_previous);
-      auto tc_now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      std::this_thread::sleep_for(dtcus / playback_speed_);
       // Simulate event.
       simulateEvent(ptr_event);
       // Setup for next iteration of while loop.
@@ -106,16 +103,14 @@ void EventPlayerHub::runOnce(unsigned int duration_ms) {
     if (ptr_event->timestamp > tmus_end) {
       // Event doesn't occur in this call to runOnce. Wait until tmus_end.
       auto dtcus = std::chrono::microseconds(tmus_end - tmus_previous_run_end_);
-      auto tc_now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      std::this_thread::sleep_for(dtcus / playback_speed_);
       // Setup tmus_previous_run_end_ for next call to run or runOnce.
       tmus_previous_run_end_ = tmus_end;
       return;
     } else {
       // Wait until the event's timestamp.
       auto dtcus = std::chrono::microseconds(ptr_event->timestamp - tmus_previous_run_end_);
-      auto tc_now = std::chrono::steady_clock::now();
-      std::this_thread::sleep_until(tc_now + (dtcus / playback_speed_));
+      std::this_thread::sleep_for(dtcus / playback_speed_);
       // Simulate event.
       simulateEvent(ptr_event);
       // Setup for next call to run or runOnce.
