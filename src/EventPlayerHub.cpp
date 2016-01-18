@@ -14,6 +14,8 @@ EventPlayerHub::EventPlayerHub(const EventQueue& events, float playback_speed,
   // Get the timestamp of the first myo event.
   popOnPeriodicEvents();
   if (! events_.queue.empty()) {
+    // We can static_cast here because popOnPeriodicEvents removed all the
+    // PeriodicEvents and those are the only events that are not MyoEvents.
     tmus_previous_run_end_ = static_cast<MyoEvent*>(events_.queue.front().get())->timestamp;
   }
   // Get the same number of myos as used in the event queue.
