@@ -17,3 +17,4 @@ if(WithSerialization)
 endif(WithSerialization)
 
 add_subdirectory(src)
+add_subdirectory(examples)
