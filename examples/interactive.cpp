@@ -1,7 +1,7 @@
 #include <iostream>
 #include <myo/myo.hpp>
 
-#include "../src/Hub.h"
+#include "../src/hub.h"
 
 class PrintListener : public myo::DeviceListener {
  public:

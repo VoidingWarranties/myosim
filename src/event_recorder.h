@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include "EventTypes.h"
+#include "event_types.h"
 
 namespace myosim {
 class EventRecorder : public myo::DeviceListener {

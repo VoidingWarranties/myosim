@@ -4,10 +4,10 @@
 #include <boost/serialization/nvp.hpp>
 #include <myo/myo.hpp>
 
-#include "../src/SerializableEventTypes.h"
-#include "../src/EventRecorder.h"
-#include "../src/EventPlayerHub.h"
-#include "../src/Hub.h"
+#include "../src/serializable_event_types.h"
+#include "../src/event_recorder.h"
+#include "../src/event_player_hub.h"
+#include "../src/hub.h"
 
 class PrintListener : public myo::DeviceListener {
  public:

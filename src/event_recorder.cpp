@@ -1,4 +1,4 @@
-#include "EventRecorder.h"
+#include "event_recorder.h"
 
 namespace myosim {
 EventRecorder::EventTypes operator|(EventRecorder::EventTypes lhs,

@@ -5,19 +5,19 @@ option(SerializationExample "Compile serialization example" OFF)
 set(LIBS ${LIBS} myosim)
 
 if(InteractiveExample)
-  add_executable(Interactive Interactive.cpp)
-  target_link_libraries(Interactive ${LIBS})
-  target_compile_features(Interactive PRIVATE cxx_auto_type) # C++11
+  add_executable(interactive interactive.cpp)
+  target_link_libraries(interactive ${LIBS})
+  target_compile_features(interactive PRIVATE cxx_auto_type) # C++11
 endif(InteractiveExample)
 
 if(PlaybackExample)
-  add_executable(Playback Playback.cpp)
-  target_link_libraries(Playback ${LIBS})
-  target_compile_features(Playback PRIVATE cxx_auto_type) # C++11
+  add_executable(playback playback.cpp)
+  target_link_libraries(playback ${LIBS})
+  target_compile_features(playback PRIVATE cxx_auto_type) # C++11
 endif(PlaybackExample)
 
 if(SerializationExample)
-  add_executable(Serialization Serialize.cpp)
-  target_link_libraries(Serialization ${LIBS})
-  target_compile_features(Serialization PRIVATE cxx_auto_type) # C++11
+  add_executable(serialization serialize.cpp)
+  target_link_libraries(serialization ${LIBS})
+  target_compile_features(serialization PRIVATE cxx_auto_type) # C++11
 endif(SerializationExample)

@@ -8,7 +8,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 
-#include "EventTypes.h"
+#include "event_types.h"
 
 BOOST_CLASS_EXPORT(myosim::PeriodicEvent);
 BOOST_CLASS_EXPORT(myosim::EventQueue);
@@ -29,4 +29,4 @@ BOOST_CLASS_EXPORT(myosim::BatteryLevelReceivedEvent);
 BOOST_CLASS_EXPORT(myosim::EmgDataEvent);
 BOOST_CLASS_EXPORT(myosim::WarmupCompletedEvent);
 
-#include "SerializableEventTypes.h"
+#include "serializable_event_types.h"

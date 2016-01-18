@@ -13,7 +13,7 @@
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
-#include "EventTypes.h"
+#include "event_types.h"
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::Event);
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(myosim::MyoEvent);

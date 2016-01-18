@@ -9,8 +9,8 @@
 #include <vector>
 #include <myo/myo.hpp>
 
-#include "Hub.h"
-#include "EventTypes.h"
+#include "hub.h"
+#include "event_types.h"
 
 namespace myosim {
 class EventPlayerHub : public Hub {
