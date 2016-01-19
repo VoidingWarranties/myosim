@@ -1,23 +1,16 @@
-option(InteractiveExample "Compile interactive example" OFF)
-option(PlaybackExample "Compile playback example" OFF)
-option(SerializationExample "Compile serialization example" OFF)
-
 set(LIBS ${LIBS} myosim)
 
-if(InteractiveExample)
-  add_executable(interactive interactive.cpp)
-  target_link_libraries(interactive ${LIBS})
-  target_compile_features(interactive PRIVATE cxx_auto_type) # C++11
-endif(InteractiveExample)
+add_executable(interactive-example EXCLUDE_FROM_ALL interactive.cpp)
+set_target_properties(interactive-example PROPERTIES OUTPUT_NAME interactive)
+target_link_libraries(interactive-example ${LIBS})
+target_compile_features(interactive-example PRIVATE cxx_auto_type) # C++11
 
-if(PlaybackExample)
-  add_executable(playback playback.cpp)
-  target_link_libraries(playback ${LIBS})
-  target_compile_features(playback PRIVATE cxx_auto_type) # C++11
-endif(PlaybackExample)
+add_executable(playback-example EXCLUDE_FROM_ALL playback.cpp)
+set_target_properties(playback-example PROPERTIES OUTPUT_NAME playback)
+target_link_libraries(playback-example ${LIBS})
+target_compile_features(playback-example PRIVATE cxx_auto_type) # C++11
 
-if(SerializationExample)
-  add_executable(serialization serialize.cpp)
-  target_link_libraries(serialization ${LIBS})
-  target_compile_features(serialization PRIVATE cxx_auto_type) # C++11
-endif(SerializationExample)
+add_executable(serialization-example EXCLUDE_FROM_ALL serialize.cpp)
+set_target_properties(serialization-example PROPERTIES OUTPUT_NAME serialization)
+target_link_libraries(serialization-example ${LIBS})
+target_compile_features(serialization-example PRIVATE cxx_auto_type) # C++11
