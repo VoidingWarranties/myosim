@@ -51,6 +51,8 @@ void EventPlayerHub::runAll(const std::function<void(void)>& periodic) {
     if (auto ptr = dynamic_cast<PeriodicEvent*>(events_.queue.front().get())) {
       periodic();
     } else if (auto ptr = dynamic_cast<MyoEvent*>(events_.queue.front().get())) {
+      // issue #16: MSVC++ fails to build because <chrono> is broken. We must use
+      // duration_cast to allow for arbitrary duration arithmetic.
       auto dtcms = std::chrono::microseconds(ptr->timestamp - tmus_previous);
       std::chrono::microseconds pbs = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::duration<float, std::micro>(playback_speed_));
