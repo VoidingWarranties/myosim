@@ -9,7 +9,8 @@ find_package(Myo REQUIRED)
 include_directories(${Myo_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${Myo_LIBRARIES})
 
-# Compile with boost serialization library if -DWithSerialization=YES is specified on the command line.
+# Compile with boost serialization library
+# if -DWithSerialization=On is specified on the command line.
 if(WithSerialization)
   find_package(Boost REQUIRED serialization)
   include_directories(${Boost_INCLUDE_DIRS})
